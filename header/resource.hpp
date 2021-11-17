@@ -2,20 +2,26 @@
 
 #include"frostylib.hpp"
 
+template<uint sz>
+using LoopAnimation = Animation<sz, 16>;
+
+template<uint sz>
+using TransitAnimation = Animation<sz, 12>;
+
 //自机待机
-extern Animation<4, 3> reimu_idle;
+extern LoopAnimation<4> reimu_idle;
 
 //自机转向(过渡)
-extern Animation<3, 3> reimu_t;
+extern TransitAnimation<3> reimu_t;
 
 //自机转向
-extern Animation<4, 3> reimu_lr;
+extern LoopAnimation<4> reimu_lr;
 
 //自机弹幕
 extern FImage *spellcard;
 
 //敌机(简易)
-extern FImage *enemyblue[4];
+extern LoopAnimation<4> enemyblue;
 
 //敌机弹幕
 extern FImage *bluebullet;

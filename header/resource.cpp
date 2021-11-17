@@ -1,12 +1,14 @@
 #include"resource.hpp"
 
 
-Animation<4, 3> reimu_idle;
-Animation<3, 3> reimu_t;
-Animation<4, 3> reimu_lr;
+LoopAnimation<4> reimu_idle;
+TransitAnimation<3> reimu_t;
+LoopAnimation<4> reimu_lr;
 
 FImage *spellcard;
-FImage *enemyblue[4];
+
+LoopAnimation<4> enemyblue;
+
 FImage *bluebullet;
 
 void loadResource(){
@@ -27,10 +29,11 @@ void loadResource(){
 
     spellcard = FImage::FromFile(L"img/reimu/spellcard.png");
 
-    enemyblue[0] = FImage::FromFile(L"img/blue/0.png");
-    enemyblue[1] = FImage::FromFile(L"img/blue/1.png");
-    enemyblue[2] = FImage::FromFile(L"img/blue/2.png");
-    enemyblue[3] = FImage::FromFile(L"img/blue/3.png");
+    enemyblue.load({
+        L"img/blue/0.png",
+        L"img/blue/1.png",
+        L"img/blue/2.png",
+        L"img/blue/3.png" });
 
     bluebullet = FImage::FromFile(L"img/blue/blue.png");
 }

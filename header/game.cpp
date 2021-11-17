@@ -1,12 +1,14 @@
-#include"game.hpp"
 #include<random>
 #include<ctime>
 
-template<typename T1, typename T2>
-inline REAL min(const T1 &x, const T2 &y){ return x > y ? y : x; }
+#include"game.hpp"
+
 
 template<typename T1, typename T2>
-inline REAL max(const T1 &x, const T2 &y){ return x > y ? x : y; }
+inline auto min(const T1 &x, const T2 &y){ return x > y ? y : x; }
+
+template<typename T1, typename T2>
+inline auto max(const T1 &x, const T2 &y){ return x > y ? x : y; }
 
 template<typename T>
 inline int ei(const T &x){
@@ -45,13 +47,13 @@ player::player(cREAL &X, cREAL &Y, cint &Health, cREAL &Speed): chara(X, Y, Heal
 
 void player::update(){
     if (ishold(VK_UP))
-        y = max(y - speed, playerHeight >> 1);
+        y = max(y - speed, 0);
     if (ishold(VK_DOWN))
-        y = min(y + speed, MapHeight - (playerHeight >> 1));
+        y = min(y + speed, MapHeight);
     if (ishold(VK_LEFT))
-        x = max(x - speed, playerwidth >> 1);
+        x = max(x - speed, 0);
     if (ishold(VK_RIGHT))
-        x = min(x + speed, MapWidth - (playerwidth >> 1));
+        x = min(x + speed, MapWidth);
 }
 
 void player::draw(){
@@ -71,7 +73,7 @@ void player::draw(){
     }
     else{
         lt = 0;
-        reimu_idle.drawAround(x, y);
+        reimu_idle.drawAroundFlip(x, y, lr);
         reimu_lr.reset();
     }
 }
@@ -105,7 +107,5 @@ void enemy::update(){
 
 void enemy::draw(){
     if (!getState())return;
-    static int fcount = 0;
-    enemyblue[fcount >> 2]->drawAround(x, y);
-    if (++fcount >= 16)fcount = 0;
+    enemyblue.drawAround(x, y);
 }

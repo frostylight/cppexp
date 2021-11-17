@@ -6,7 +6,7 @@
 
 
 //自机
-player reimu(MapWidth >> 1, MapHeight * 0.8, 3, 4.5);
+player reimu(MapWidth >> 1, MapHeight * 0.8);
 //自机弹幕
 std::forward_list<playerBullet>playerBulletList;
 //敌机
@@ -88,8 +88,8 @@ void enemyAppear(){
 }
 
 void playerShot(){
-	static int CD = 2;
-	if (++CD == 3){
+	static int CD = 5;
+	if (++CD == 6){
 		CD = 0;
 		playerBulletList.emplace_front(reimu.getX(), reimu.getY() - 10, 0, -15);
 	}

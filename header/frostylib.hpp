@@ -15,6 +15,7 @@
 
 #include<functional>
 #include<initializer_list>
+#include<array>
 
 #include"pre.hpp"
 
@@ -137,7 +138,7 @@ class FImage :public Gdiplus::Image{
  */
 template<uint sz, uint lasting>
 class Animation{
-    FImage *img[sz];
+    std::array<FImage *, sz>img;
     uint now;
 
     public:
@@ -180,14 +181,14 @@ class Animation{
 */
 
 template<uint sz, uint lasting>
-Animation<sz, lasting>::Animation():now(0){}
+Animation<sz, lasting>::Animation():now(0){ img.fill(nullptr); }
 
 template<uint sz, uint lasting>
 void Animation<sz, lasting>::load(const filePathList &plist){
     uint ind = 0;
     for (auto fpath : plist){
-        img[ind] = FImage::FromFile(fpath);
-        if (++ind == sz)break;
+        img[ind++] = FImage::FromFile(fpath);
+        if (ind >= sz)break;
     }
 }
 
@@ -196,12 +197,14 @@ void Animation<sz, lasting>::reset(){ now = 0; }
 
 template<uint sz, uint lasting>
 void Animation<sz, lasting>::drawAround(cREAL &x, cREAL &y){
-    img[now % lasting]->drawAround(x, y);
+    if (uint id = now / lasting;img.at(id))
+        img[id]->drawAround(x, y);
     if (++now == allt)now = 0;
 }
 
 template<uint sz, uint lasting>
 void Animation<sz, lasting>::drawAroundFlip(cREAL &x, cREAL &y, cbool &flip){
-    img[now % lasting]->drawAroundFlip(x, y, flip);
+    if (uint id = now / lasting;img.at(id))
+        img[id]->drawAroundFlip(x, y, flip);
     if (++now == allt)now = 0;
 }

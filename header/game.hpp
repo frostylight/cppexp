@@ -4,19 +4,19 @@
 #include"resource.hpp"
 
 
-const int playerHeight = 40, playerwidth = 24;
-const int WinWidth = 640, WinHeight = 480;
-const int MapWidth = 400, MapHeight = 480;
-const int FrameLimit = 60;
+constexpr int WinWidth = 640, WinHeight = 480;
+constexpr int MapWidth = 400, MapHeight = 480;
+constexpr int playerHealth = 3;
+constexpr REAL playerSpeed = 4.5;
 
 class playerBullet :public bullet{
-public:
+    public:
     playerBullet(cREAL &X, cREAL &Y, cREAL &dX, cREAL &dY, cint &Damage = 1);
     void draw();
 };
 
 class enemyBullet :public bullet{
-public:
+    public:
     enemyBullet(cREAL &X, cREAL &Y, cREAL &dX, cREAL &dY, cint &Damage = 1);
     void draw();
 };
@@ -24,8 +24,8 @@ public:
 class player :public chara{
     REAL speed;
 
-public:
-    player(cREAL &X, cREAL &Y, cint &Health = 3, cREAL &Speed = 4.5);
+    public:
+    player(cREAL &X, cREAL &Y, cint &Health = playerHealth, cREAL &Speed = playerSpeed);
 
     void update();
     void draw();
@@ -36,7 +36,7 @@ class enemy :public chara{
     REAL rx, ry;
     int stayTime;
 
-public:
+    public:
     enemy(cREAL &X, cREAL &Y, cREAL &sX, cREAL &sY, cint &sTime, cint &Health = 1);
 
     void update();
