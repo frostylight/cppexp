@@ -10,13 +10,13 @@ const int MapWidth = 400, MapHeight = 480;
 const int FrameLimit = 60;
 
 class playerBullet :public bullet{
-    public:
+public:
     playerBullet(cREAL &X, cREAL &Y, cREAL &dX, cREAL &dY, cint &Damage = 1);
     void draw();
 };
 
 class enemyBullet :public bullet{
-    public:
+public:
     enemyBullet(cREAL &X, cREAL &Y, cREAL &dX, cREAL &dY, cint &Damage = 1);
     void draw();
 };
@@ -24,7 +24,7 @@ class enemyBullet :public bullet{
 class player :public chara{
     REAL speed;
 
-    public:
+public:
     player(cREAL &X, cREAL &Y, cint &Health = 3, cREAL &Speed = 4.5);
 
     void update();
@@ -36,7 +36,7 @@ class enemy :public chara{
     REAL rx, ry;
     int stayTime;
 
-    public:
+public:
     enemy(cREAL &X, cREAL &Y, cREAL &sX, cREAL &sY, cint &sTime, cint &Health = 1);
 
     void update();

@@ -1,29 +1,22 @@
 #pragma once
 
-#include<functional>
-#include<initializer_list>
+constexpr int DEFAULT = -1;
 
-#define DEFAULT -1
+using REAL = float;
+using WCHAR = wchar_t;
 
-typedef float REAL;
-typedef wchar_t WCHAR;
+using uint = unsigned int;
+using byte = unsigned char;
 
-typedef unsigned int uint;
-typedef unsigned char byte;
+using cint = const int;
+using cchar = const char;
+using cbool = const bool;
 
-typedef const int cint;
-typedef const char cchar;
-typedef const bool cbool;
+using cbyte = const byte;
+using cREAL = const REAL;
+using cuit = const uint;
 
-typedef const byte cbyte;
-typedef const REAL cREAL;
-typedef const uint cuit;
-
-typedef const WCHAR *filePath;
-
-typedef std::function<void(void)> voidF;
-typedef std::initializer_list<const WCHAR *> filePathList;
-
+using filePath = const WCHAR *;
 
 template<typename T>
 inline T abs(const T &x){ return x >= 0 ? x : -x; }

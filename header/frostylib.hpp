@@ -13,10 +13,14 @@
 #include<windows.h>
 #include<gdiplus.h>
 
+#include<functional>
+#include<initializer_list>
+
 #include"pre.hpp"
 
-
-typedef Gdiplus::Color COLOR;
+using voidF = std::function<void(void)>;
+using filePathList = std::initializer_list<filePath>;
+using COLOR = Gdiplus::Color;
 
 
 void Setup(void);
@@ -31,6 +35,7 @@ void Setup(void);
  * @param height 窗口高度
  */
 void initWindow(cchar title[], int left, int top, int width, int height);
+
 /**
  * @brief 初始化控制台
  */
@@ -44,6 +49,7 @@ void initConsole(void);
  * @param f 调用函数
  */
 void startTimer(cbyte &timerID, cint &timeinterval, voidF f);
+
 /**
  * @brief 取消一个定时器
  *
@@ -62,6 +68,7 @@ bool ishold(cbyte &key);
  * @brief 初始化绘图
  */
 void beginPaint(void);
+
 /**
  * @brief 结束绘图
  */
@@ -71,10 +78,12 @@ void endPaint(void);
  * @param color RGB/RGBA
  */
 void setPenColor(const COLOR &color);
+
 /**
  * @param w 宽度
  */
 void setPenWidth(cREAL &w);
+
 /**
  * @param color RGB/RGBA
  */
@@ -84,6 +93,7 @@ void setBrushColor(const COLOR &color);
  * @brief 绘制一条穿过(x1, y1)和(x2, y2)的直线
  */
 void line(cREAL &x1, cREAL &y1, cREAL &x2, cREAL &y2);
+
 /**
  * @brief 以(x, y)为左上角绘制矩形
  *
@@ -98,9 +108,14 @@ void rectangle(cREAL &x, cREAL &y, cREAL &w, cREAL &h);
 class FImage :public Gdiplus::Image{
     uint w, h;
 
-public:
+    public:
     FImage(filePath filename);
     static FImage *FromFile(filePath filename);
+
+    /**
+     * @brief 禁用赋值
+     */
+    auto operator=(const FImage &o) = delete;
 
     /**
      * @brief 以(x, y)为中心绘图
@@ -125,19 +140,28 @@ class Animation{
     FImage *img[sz];
     uint now;
 
-public:
+    public:
     /**
      * @brief 循环一次所需帧数
      */
     static constexpr uint allt = sz * lasting;
+
     Animation();
+
+    /**
+     * @brief 禁用赋值
+     */
+    auto operator=(const Animation &o) = delete;
+
     /**
      * @brief 加载图片序列
      *
      * @param plist 图片文件路径列表
      */
     void load(const filePathList &plist);
+
     void reset();
+
     /**
      * @brief 以(x, y)为中心绘制一帧
      */

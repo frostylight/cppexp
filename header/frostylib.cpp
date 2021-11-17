@@ -1,6 +1,5 @@
 #include"frostylib.hpp"
 
-
 void Setup();
 
 //定义窗口所用变量
@@ -43,16 +42,15 @@ bool keyhold[0xff];
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 
-#define ASSERT(_Expression,errStr)  (!!(_Expression)) || (ASSERT_ERROR(errStr),0)
+#define ASSERT(_Expression,errStr)  (!!(_Expression)) || (ASSERT_ERROR(errStr), 0)
 #define ASSERT_HWND ASSERT(g_hWnd, "You should call initWindow(...) first")
-#define ASSERT_PAINT ASSERT(g_graphics&&g_bitmap, "You should call beginPaint() first")
+#define ASSERT_PAINT ASSERT(g_graphics && g_bitmap, "You should call beginPaint() first")
 void ASSERT_ERROR(cchar *errStr){
     MessageBoxA(g_hWnd, errStr, g_libName, MB_ICONERROR);
     exit(0);
 }
 
 //定义窗口
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow){
     MSG msg;
     WNDCLASSA wndclass;

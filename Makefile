@@ -4,7 +4,7 @@ LIB = gdi32 gdiplus
 all: $(HEADER) core.o make
 
 %.o:%.cpp
-	g++ -c $^ -o $@
+	g++ -std=c++17 -c $^ -o $@
 
 make:
-	g++ $(HEADER) core.o $(LIB:%=-l%) -o core.exe
+	g++ -std=c++17 $(HEADER) core.o $(LIB:%=-l%) -o core.exe
