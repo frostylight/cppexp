@@ -3,10 +3,10 @@
 #include"frostylib.hpp"
 
 template<uint sz>
-using LoopAnimation = Animation<sz, 16>;
+using LoopAnimation = Animation<sz, 8>;
 
 template<uint sz>
-using TransitAnimation = Animation<sz, 12>;
+using TransitAnimation = Animation<sz, 6>;
 
 //自机待机
 extern LoopAnimation<4> reimu_idle;

@@ -3,11 +3,11 @@
 #include"object.hpp"
 #include"resource.hpp"
 
-
 constexpr int WinWidth = 640, WinHeight = 480;
 constexpr int MapWidth = 400, MapHeight = 480;
 constexpr int playerHealth = 3;
 constexpr REAL playerSpeed = 4.5;
+
 
 class playerBullet :public bullet{
     public:

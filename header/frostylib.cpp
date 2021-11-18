@@ -1,5 +1,6 @@
 #include"frostylib.hpp"
 
+
 void Setup();
 
 //定义窗口所用变量
@@ -224,9 +225,13 @@ void rectangle(cREAL &x, cREAL &y, cREAL &w, cREAL &h){
     g_graphics->FillRectangle(g_brush, x, y, w, h);
 }
 
-FImage::FImage(const WCHAR *filename):Gdiplus::Image(filename){ w = GetWidth();h = GetHeight(); }
-FImage *FImage::FromFile(const WCHAR *filename){ return new FImage(filename); }
+ImageLoadException::ImageLoadException(filePath p): e(p){}
 
+FImage::FImage(filePath filename) : Gdiplus::Image(filename){
+    if (this->GetLastStatus() != Gdiplus::Ok)throw ImageLoadException(filename);
+    w = GetWidth();h = GetHeight();
+}
+FImage *FImage::FromFile(filePath filename){ return new FImage(filename); }
 
 void FImage::drawAround(cREAL &x, cREAL &y){
     ASSERT_PAINT;

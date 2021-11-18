@@ -64,17 +64,22 @@ void player::draw(){
             lr = !lr;
             lt = 0;
             reimu_lr.reset();
+            reimu_t.reset();
         }
-        if (++lt <= reimu_t.allt)
+        if (++lt <= reimu_t.allt){
             reimu_t.drawAroundFlip(x, y, lr);
-        else
+            reimu_idle.reset();
+        }
+        else{
             reimu_lr.drawAroundFlip(x, y, lr);
-        reimu_idle.reset();
+            reimu_t.reset();
+        }
     }
     else{
         lt = 0;
         reimu_idle.drawAroundFlip(x, y, lr);
         reimu_lr.reset();
+        reimu_t.reset();
     }
 }
 

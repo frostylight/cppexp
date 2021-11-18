@@ -103,6 +103,16 @@ void line(cREAL &x1, cREAL &y1, cREAL &x2, cREAL &y2);
  */
 void rectangle(cREAL &x, cREAL &y, cREAL &w, cREAL &h);
 
+
+/**
+ * @brief 图片读取错误异常
+ */
+struct ImageLoadException{
+    //出错的图片路径
+    filePath e;
+    ImageLoadException(filePath p);
+};
+
 /**
  * @brief 重新包装的Image类
  */
@@ -187,7 +197,13 @@ template<uint sz, uint lasting>
 void Animation<sz, lasting>::load(const filePathList &plist){
     uint ind = 0;
     for (auto fpath : plist){
-        img[ind++] = FImage::FromFile(fpath);
+        try{
+            img[ind++] = FImage::FromFile(fpath);
+        }
+        catch (ImageLoadException &e){
+            img[ind - 1] = nullptr;
+            std::wprintf(L"ImageLoadError:%ls\n", e.e);
+        }
         if (ind >= sz)break;
     }
 }
