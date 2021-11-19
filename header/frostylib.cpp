@@ -1,4 +1,11 @@
+#include<memory>
+
 #include"frostylib.hpp"
+
+template<typename T>
+using uptr = std::unique_ptr<T>;
+
+#define mkuptr std::make_unique
 
 
 void Setup();
@@ -19,10 +26,10 @@ Gdiplus::GdiplusStartupInput m_gdiplusStartupInput;
 
 //双缓冲绘图所用变量
 
-Gdiplus::Bitmap *g_bitmap = nullptr;
-Gdiplus::CachedBitmap *g_cachebmp = nullptr;
-Gdiplus::Graphics *g_graphics = nullptr;
-Gdiplus::Graphics *g_hdcgp = nullptr;
+uptr<Gdiplus::Bitmap>g_bitmap;
+uptr<Gdiplus::CachedBitmap> g_cachebmp;
+uptr<Gdiplus::Graphics> g_graphics;
+uptr<Gdiplus::Graphics> g_hdcgp;
 
 //绘图所用变量
 
@@ -111,17 +118,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
             PAINTSTRUCT ps;
             hdc = BeginPaint(hwnd, &ps);
             if (g_bitmap){
-                g_hdcgp = Gdiplus::Graphics::FromHDC(hdc);
-                g_cachebmp = new Gdiplus::CachedBitmap(g_bitmap, g_hdcgp);
-                g_hdcgp->DrawCachedBitmap(g_cachebmp, 0, 0);
-                delete g_cachebmp;
-                delete g_hdcgp;
+                g_hdcgp = mkuptr<Gdiplus::Graphics>(hdc);
+                g_cachebmp = mkuptr<Gdiplus::CachedBitmap>(g_bitmap.get(), g_hdcgp.get());
+                g_hdcgp->DrawCachedBitmap(g_cachebmp.get(), 0, 0);
             }
             EndPaint(hwnd, &ps);
-            if (g_bitmap)delete g_bitmap;
-            g_bitmap = nullptr;
-            if (g_graphics)delete g_graphics;
-            g_graphics = nullptr;
+            g_bitmap.reset();
+            g_graphics.reset();
             break;
         }
 
@@ -203,8 +206,8 @@ void beginPaint(){
     ASSERT(!g_bitmap, "Don't call beginPaint() twice");
     static RECT rc;
     GetClientRect(g_hWnd, &rc);
-    g_bitmap = new Gdiplus::Bitmap(int(rc.right), int(rc.bottom));
-    g_graphics = Gdiplus::Graphics::FromImage(g_bitmap);
+    g_bitmap = mkuptr<Gdiplus::Bitmap>(int(rc.right), int(rc.bottom));
+    g_graphics.reset(Gdiplus::Graphics::FromImage(g_bitmap.get()));
     g_graphics->SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
 }
 void endPaint(){
