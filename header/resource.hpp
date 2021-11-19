@@ -1,6 +1,6 @@
 #pragma once
 
-#include"frostylib.hpp"
+#include "frostylib.hpp"
 
 template<uint sz>
 using LoopAnimation = Animation<sz, 8>;
@@ -30,4 +30,3 @@ extern FImage *bluebullet;
  * @brief 加载图片资源
  */
 void loadResource();
-

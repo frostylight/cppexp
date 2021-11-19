@@ -6,22 +6,21 @@
  * @date 2021-11-17
  *
  * @copyright Copyright (c) 2021
- *
  */
 #pragma once
 
-#include<windows.h>
-#include<gdiplus.h>
+#include <gdiplus.h>
+#include <windows.h>
 
-#include<functional>
-#include<initializer_list>
-#include<array>
+#include <array>
+#include <functional>
+#include <initializer_list>
 
-#include"pre.hpp"
+#include "pre.hpp"
 
-using voidF = std::function<void(void)>;
+using voidF        = std::function<void(void)>;
 using filePathList = std::initializer_list<filePath>;
-using COLOR = Gdiplus::Color;
+using COLOR        = Gdiplus::Color;
 
 
 void Setup(void);
@@ -107,7 +106,7 @@ void rectangle(cREAL &x, cREAL &y, cREAL &w, cREAL &h);
 /**
  * @brief 图片读取错误异常
  */
-struct ImageLoadException{
+struct ImageLoadException {
     //出错的图片路径
     filePath e;
     ImageLoadException(filePath p);
@@ -116,10 +115,10 @@ struct ImageLoadException{
 /**
  * @brief 重新包装的Image类
  */
-class FImage :public Gdiplus::Image{
+class FImage: public Gdiplus::Image {
     uint w, h;
 
-    public:
+  public:
     FImage(filePath filename);
     static FImage *FromFile(filePath filename);
 
@@ -147,11 +146,11 @@ class FImage :public Gdiplus::Image{
  * @tparam lasting 每张图持续帧数
  */
 template<uint sz, uint lasting>
-class Animation{
-    std::array<FImage *, sz>img;
+class Animation {
+    std::array<FImage *, sz> img;
     uint now;
 
-    public:
+  public:
     /**
      * @brief 循环一次所需帧数
      */
@@ -191,36 +190,43 @@ class Animation{
 */
 
 template<uint sz, uint lasting>
-Animation<sz, lasting>::Animation():now(0){ img.fill(nullptr); }
+Animation<sz, lasting>::Animation()
+  : now(0) {
+    img.fill(nullptr);
+}
 
 template<uint sz, uint lasting>
-void Animation<sz, lasting>::load(const filePathList &plist){
+void Animation<sz, lasting>::load(const filePathList &plist) {
     uint ind = 0;
-    for (auto fpath : plist){
-        try{
+    for(auto fpath: plist) {
+        try {
             img[ind++] = FImage::FromFile(fpath);
-        }
-        catch (ImageLoadException &e){
+        } catch(ImageLoadException &e) {
             img[ind - 1] = nullptr;
             std::wprintf(L"ImageLoadError:%ls\n", e.e);
         }
-        if (ind >= sz)break;
+        if(ind >= sz)
+            break;
     }
 }
 
 template<uint sz, uint lasting>
-void Animation<sz, lasting>::reset(){ now = 0; }
-
-template<uint sz, uint lasting>
-void Animation<sz, lasting>::drawAround(cREAL &x, cREAL &y){
-    if (uint id = now / lasting;img.at(id))
-        img[id]->drawAround(x, y);
-    if (++now == allt)now = 0;
+void Animation<sz, lasting>::reset() {
+    now = 0;
 }
 
 template<uint sz, uint lasting>
-void Animation<sz, lasting>::drawAroundFlip(cREAL &x, cREAL &y, cbool &flip){
-    if (uint id = now / lasting;img.at(id))
+void Animation<sz, lasting>::drawAround(cREAL &x, cREAL &y) {
+    if(uint id = now / lasting; img.at(id))
+        img[id]->drawAround(x, y);
+    if(++now == allt)
+        now = 0;
+}
+
+template<uint sz, uint lasting>
+void Animation<sz, lasting>::drawAroundFlip(cREAL &x, cREAL &y, cbool &flip) {
+    if(uint id = now / lasting; img.at(id))
         img[id]->drawAroundFlip(x, y, flip);
-    if (++now == allt)now = 0;
+    if(++now == allt)
+        now = 0;
 }
