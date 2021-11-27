@@ -252,12 +252,16 @@ FImage::FImage(filePath filename)
 FImage *FImage::FromFile(filePath filename) {
     return new FImage(filename);
 }
-
+uint FImage::getw() const {
+    return w;
+}
+uint FImage::geth() const {
+    return h;
+}
 void FImage::drawAround(cREAL &x, cREAL &y) {
     ASSERT_PAINT;
     g_graphics->DrawImage(this, x - (w >> 1), y - (h >> 1), (REAL)w, (REAL)h);
 }
-
 Gdiplus::PointF points[3];
 void FImage::drawAroundFlip(cREAL &x, cREAL &y, cbool &flip) {
     ASSERT_PAINT;

@@ -1,10 +1,15 @@
 #include <windows.h>
 
+#include <cmath>
 #include <ctime>
 #include <forward_list>
 
-#include "header/game.hpp"
-#include "header/resource.hpp"
+#include "header/game_core.hpp"
+
+using namespace GAME_BASE;
+using namespace GAME_CORE;
+using namespace GAME_DEFAULT_SETTING;
+using namespace GAME_RESOURCE;
 
 //自机
 player reimu(MapWidth >> 1, MapHeight * 0.8);
@@ -15,19 +20,6 @@ std::forward_list<enemyBullet> enemyBulletList;
 //敌机弹幕
 std::forward_list<enemy> enemyList;
 
-//更新列表内对象，并删除非活跃对象
-template<typename T>
-void listUpdate(std::forward_list<T> &lst) {
-    static_assert(T::getState);
-    static_assert(T::update);
-    for(auto i = lst.before_begin(); i._M_next() != lst.end();) {
-        if(!(*i._M_next()).getState())
-            lst.erase_after(i);
-        else
-            (*++i).update();
-    }
-}
-
 void drawBackground();
 void drawGUI();
 void enemyAppear();
@@ -36,11 +28,11 @@ void playerShot();
 void runGame();
 
 void Setup() {
-
-    initWindow("", DEFAULT, DEFAULT, 640, 480);
+    initWindow("", DEFAULT, DEFAULT, WinWidth, WinHeight);
     initConsole();
 
     loadResource();
+    reimu.updateSize();
 
     srand(time(nullptr));
 
@@ -49,20 +41,70 @@ void Setup() {
 }
 
 void runGame() {
+    //更新自机弹幕
+    for(auto i = playerBulletList.before_begin(); i._M_next() != playerBulletList.end(); ++i)
+        if(!(i._M_next()->update()))
+            playerBulletList.erase_after(i);
+
+    //更新敌机弹幕
+    for(auto i = enemyBulletList.before_begin(); i._M_next() != enemyBulletList.end(); ++i)
+        if(!(i._M_next()->update()))
+            enemyBulletList.erase_after(i);
+
     //更新自机
     reimu.update();
-
-    //更新自机弹幕
-    listUpdate(playerBulletList);
+    //碰撞检测
+    for(auto i: enemyBulletList) {
+        if(reimu.iscol(&i)) {
+            reimu.hurt(1);
+            if(reimu.dead()) {
+                /* TODO 死亡处理
+                  暂停所有update
+                  显示重开/退出GUI
+                  等待鼠标点击*/
+            }
+            else {
+                // 弹幕清屏
+                enemyBulletList.clear();
+                // TODO 此处应有特效，并停止所有object的update
+                //  重置自机位置
+                reimu.setxy(MapWidth >> 1, MapHeight * 0.8);
+                // TODO 2-3s无敌状态
+                break;
+            }
+        }
+    }
     if(ishold(0x5a))
         playerShot();
 
     //更新敌机
-    listUpdate(enemyList);
+    for(auto i = enemyList.before_begin(); i._M_next() != enemyList.end(); ++i)
+        if(!(i._M_next()->update()))
+            enemyList.erase_after(i);
+        else {
+            //碰撞检测
+            for(auto j: playerBulletList)
+                if(i._M_next()->iscol(&j)) {
+                    /* TODO 伤害计算
+                    消除命中子弹*/
+                    if(i._M_next()->dead()) {
+                        /* TODO 死亡结算
+                        消除敌机
+                        可能有特效
+                        分数增加
+                        道具掉落*/
+                    }
+                }
+            //发射弹幕
+            if(i._M_next()->ready()) {
+                REAL px = reimu.getx(), py = reimu.gety();
+                REAL x = i._M_next()->getx(), y = i._M_next()->gety();
+                REAL l = sqrt((px - x) * (px - x) + (py - y) * (py - y));
+                enemyBulletList.emplace_front(x, y, (px - x) / l, (py - y) / l);
+            }
+        }
     enemyAppear();
 
-    //更新敌机弹幕
-    listUpdate(enemyBulletList);
 
     beginPaint();
 
@@ -86,18 +128,18 @@ void enemyAppear() {
     static int framecount = 0;
     switch(++framecount) {
         case 60:;
-        case 65:;
         case 70:;
-        case 75:;
         case 80:;
-            enemyList.emplace_front((MapWidth >> 2) + rand() % 41 - 20, 0, (MapWidth >> 2) + rand() % 41 - 20, MapHeight >> 1, 120);
+        case 90:;
+        case 100:;
+            enemyList.emplace_front((MapWidth >> 2) + rand() % 41 - 20, -5, (MapWidth >> 2) + rand() % 41 - 20, MapHeight >> 1, 120);
             break;
+        case 110:;
         case 120:;
-        case 125:;
         case 130:;
-        case 135:;
         case 140:;
-            enemyList.emplace_front(MapWidth - (MapWidth >> 2) + rand() % 41 - 20, 0, MapWidth - (MapWidth >> 2) + rand() % 41 - 20, MapHeight >> 1, 120);
+        case 150:;
+            enemyList.emplace_front(MapWidth - (MapWidth >> 2) + rand() % 41 - 20, -5, MapWidth - (MapWidth >> 2) + rand() % 41 - 20, MapHeight >> 1, 120);
             break;
     }
 }
@@ -106,7 +148,7 @@ void playerShot() {
     static int CD = 5;
     if(++CD == 6) {
         CD = 0;
-        playerBulletList.emplace_front(reimu.getX(), reimu.getY() - 10, 0, -15);
+        playerBulletList.emplace_front(reimu.getx(), reimu.gety() - 10, 0, -15);
     }
 }
 

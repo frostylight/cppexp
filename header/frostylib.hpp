@@ -9,10 +9,11 @@
  */
 #pragma once
 
-#include <gdiplus.h>
 #include <windows.h>
+#include <gdiplus.h>
 
 #include <array>
+#include <cstdio>
 #include <functional>
 #include <initializer_list>
 
@@ -36,9 +37,6 @@ void Setup(void);
  */
 void initWindow(cchar title[], int left, int top, int width, int height);
 
-/**
- * @brief 初始化控制台
- */
 void initConsole(void);
 
 /**
@@ -64,38 +62,21 @@ void cancelTimer(cbyte &timerID);
  */
 bool ishold(cbyte &key);
 
-/**
- * @brief 初始化绘图
- */
 void beginPaint(void);
 
-/**
- * @brief 结束绘图
- */
 void endPaint(void);
 
-/**
- * @param color RGB/RGBA
- */
 void setPenColor(const COLOR &color);
 
-/**
- * @param w 宽度
- */
 void setPenWidth(cREAL &w);
 
-/**
- * @param color RGB/RGBA
- */
 void setBrushColor(const COLOR &color);
 
-/**
- * @brief 绘制一条穿过(x1, y1)和(x2, y2)的直线
- */
+//绘制一条穿过(x1, y1)和(x2, y2)的直线
 void line(cREAL &x1, cREAL &y1, cREAL &x2, cREAL &y2);
 
 /**
- * @brief 以(x, y)为左上角绘制矩形
+ * @brief 以(x, y)为左上角填充矩形
  *
  * @param w 矩形宽度
  * @param h 矩形高度
@@ -103,18 +84,14 @@ void line(cREAL &x1, cREAL &y1, cREAL &x2, cREAL &y2);
 void rectangle(cREAL &x, cREAL &y, cREAL &w, cREAL &h);
 
 
-/**
- * @brief 图片读取错误异常
- */
+//图片读取错误异常
 struct ImageLoadException {
     //出错的图片路径
     filePath e;
     ImageLoadException(filePath p);
 };
 
-/**
- * @brief 重新包装的Image类
- */
+//重新包装的Image类
 class FImage: public Gdiplus::Image {
     uint w, h;
 
@@ -122,14 +99,10 @@ class FImage: public Gdiplus::Image {
     FImage(filePath filename);
     static FImage *FromFile(filePath filename);
 
-    /**
-     * @brief 禁用赋值
-     */
-    auto operator=(const FImage &o) = delete;
+    uint getw() const;
+    uint geth() const;
 
-    /**
-     * @brief 以(x, y)为中心绘图
-     */
+    //以(x, y)为中心绘图
     void drawAround(cREAL &x, cREAL &y);
     /**
      * @brief 以(x, y)为中心绘图
@@ -151,17 +124,13 @@ class Animation {
     uint now;
 
   public:
-    /**
-     * @brief 循环一次所需帧数
-     */
+    //循环一次所需帧数
     static constexpr uint allt = sz * lasting;
 
     Animation();
 
-    /**
-     * @brief 禁用赋值
-     */
-    auto operator=(const Animation &o) = delete;
+    uint getw() const;
+    uint geth() const;
 
     /**
      * @brief 加载图片序列
@@ -172,9 +141,7 @@ class Animation {
 
     void reset();
 
-    /**
-     * @brief 以(x, y)为中心绘制一帧
-     */
+    //以(x, y)为中心绘制一帧
     void drawAround(cREAL &x, cREAL &y);
     /**
      * @brief 以(x, y)为中心绘制一帧
@@ -194,27 +161,33 @@ Animation<sz, lasting>::Animation()
   : now(0) {
     img.fill(nullptr);
 }
-
+template<uint sz, uint lasting>
+uint Animation<sz, lasting>::getw() const {
+    return img[0] ? img[0]->getw() : 0;
+}
+template<uint sz, uint lasting>
+uint Animation<sz, lasting>::geth() const {
+    return img[0] ? img[0]->geth() : 0;
+}
 template<uint sz, uint lasting>
 void Animation<sz, lasting>::load(const filePathList &plist) {
     uint ind = 0;
     for(auto fpath: plist) {
         try {
             img[ind++] = FImage::FromFile(fpath);
-        } catch(ImageLoadException &e) {
+        }
+        catch(ImageLoadException &e) {
             img[ind - 1] = nullptr;
-            std::wprintf(L"ImageLoadError:%ls\n", e.e);
+            wprintf(L"ImageLoadError:%ls\n", e.e);
         }
         if(ind >= sz)
             break;
     }
 }
-
 template<uint sz, uint lasting>
 void Animation<sz, lasting>::reset() {
     now = 0;
 }
-
 template<uint sz, uint lasting>
 void Animation<sz, lasting>::drawAround(cREAL &x, cREAL &y) {
     if(uint id = now / lasting; img.at(id))
@@ -222,7 +195,6 @@ void Animation<sz, lasting>::drawAround(cREAL &x, cREAL &y) {
     if(++now == allt)
         now = 0;
 }
-
 template<uint sz, uint lasting>
 void Animation<sz, lasting>::drawAroundFlip(cREAL &x, cREAL &y, cbool &flip) {
     if(uint id = now / lasting; img.at(id))

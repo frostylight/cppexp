@@ -16,7 +16,7 @@ AlignTrailingComments: true
 # TBD
 AllowAllArgumentsOnNextLine: true
 # deprecated in 14
-AllowAllConstructorInitializersOnNextLine: false
+AllowAllConstructorInitializersOnNextLine: true
 # TBD
 AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: Empty
@@ -51,17 +51,17 @@ BraceWrapping:
   AfterStruct:     false
   AfterUnion:      false
   AfterExternBlock: false
-  BeforeCatch:     false
-  BeforeElse:      false
+  BeforeCatch:     true
+  BeforeElse:      true
   BeforeLambdaBody: false
-  BeforeWhile:     false
+  BeforeWhile:     true
   IndentBraces:    false
-  SplitEmptyFunction: true
-  SplitEmptyRecord: true
-  SplitEmptyNamespace: true
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
 
 BreakBeforeBinaryOperators: None
-BreakBeforeBraces: Attach
+BreakBeforeBraces: Custom
 # TBD
 BreakBeforeConceptDeclarations: true
 # TBD
@@ -99,15 +99,20 @@ ForEachMacros: []
 IfMacros: []
 IncludeBlocks:   Regroup
 IncludeCategories:
+  # window.h
+  - Regex:           '<windows[.]h>'
+    Priority:        0
+    SortPriority:    0
   # c header
   - Regex:           '^[<"][^.]+[.]h[">]'
     Priority:        0
+    SortPriority:    1
   # c++ standard header
   - Regex:           '^<[^.]+>'
-    Priority:        1
+    Priority:        2
   # self header
   - Regex:           '^".+"'
-    Priority:        2
+    Priority:        3
 IncludeIsMainRegex: 'false'
 IncludeIsMainSourceRegex: ''
 IndentAccessModifiers: false
