@@ -81,27 +81,19 @@ void setTextStyle(const Gdiplus::FontStyle &style);
 void setTextColor(const COLOR &color);
 
 void setTextAlign(const Gdiplus::StringAlignment &align);
-
 void setTextLineAlign(const Gdiplus::StringAlignment &align);
 
-//绘制一条穿过(x1, y1)和(x2, y2)的直线
-void line(cREAL &x1, cREAL &y1, cREAL &x2, cREAL &y2);
+//绘制一条穿过(x1, y1), (x2, y2)的直线
+void line(cREAL &x1, cREAL &y1, cREAL &x2, cREAL &y2, const Gdiplus::Pen *_pen = nullptr);
 
-/**
- * @brief 以(x, y)为左上角填充矩形
- *
- * @param w 矩形宽度
- * @param h 矩形高度
- */
-void rectangle(cREAL &x, cREAL &y, cREAL &w, cREAL &h, Gdiplus::Brush *bs = nullptr);
+//以(x, y)为左上角，w为宽、h为高填充矩形
+void rectangle(cREAL &x, cREAL &y, cREAL &w, cREAL &h, const Gdiplus::Brush *_brush = nullptr);
 
-/**
- * @brief 以(x, y)为中心绘制字符串
- *
- * @param str 要绘制的字符串
- */
-void paintText(WString str, cREAL &x, cREAL &y);
-
+//在(x, y)处绘制字符串str，对齐方式取决于TextAlign
+void paintText(WString str, cREAL &x, cREAL &y, const Gdiplus::Brush *_brush = nullptr);
+void paintText(WString str, cREAL &x, cREAL &y, const Gdiplus::Font *_font);
+void paintText(WString str, cREAL &x, cREAL &y, const Gdiplus::Brush *_brush, const Gdiplus::Font *_font);
+void paintText(WString str, cREAL &x, cREAL &y, const Gdiplus::Font *_font, const Gdiplus::Brush *_brush);
 
 //图片读取错误异常
 struct ImageLoadException {
@@ -112,7 +104,7 @@ struct ImageLoadException {
 
 //重新包装的Image类
 class FImage: public Gdiplus::Image {
-    uint w, h;
+    uint _w, _h;
 
   public:
     FImage(filePath filename);
@@ -123,12 +115,10 @@ class FImage: public Gdiplus::Image {
 
     //以(x, y)为中心绘图
     void drawAround(cREAL &x, cREAL &y);
-    /**
-     * @brief 以(x, y)为中心绘图
-     *
-     * @param flip 是否水平翻转图片
-     */
+    //以(x, y)为中心绘制一帧，flip决定是否水平翻转图片
     void drawAroundFlip(cREAL &x, cREAL &y, cbool &flip = true);
+    //以(x, y)为中心，(tx, ty)为图片偏移量，用图片平铺宽为w、高为h的矩形
+    void drawCover(cREAL &x, cREAL &y, cREAL &w, cREAL &h, cREAL &tx = 0, cREAL &ty = 0);
 };
 
 /**
@@ -151,22 +141,15 @@ class Animation {
     uint getw() const;
     uint geth() const;
 
-    /**
-     * @brief 加载图片序列
-     *
-     * @param plist 图片文件路径列表
-     */
+    //从图片路径列表读取动画
     void load(const filePathList &plist);
 
+    //重置播放进度
     void reset();
 
     //以(x, y)为中心绘制一帧
     void drawAround(cREAL &x, cREAL &y);
-    /**
-     * @brief 以(x, y)为中心绘制一帧
-     *
-     * @param flip 是否水平翻转图片
-     */
+    //以(x, y)为中心绘制一帧，flip决定是否水平翻转图片
     void drawAroundFlip(cREAL &x, cREAL &y, cbool &flip = true);
 };
 
@@ -192,13 +175,7 @@ template<uint sz, uint lasting>
 void Animation<sz, lasting>::load(const filePathList &plist) {
     uint ind = 0;
     for(auto fpath: plist) {
-        try {
-            img[ind++] = FImage::FromFile(fpath);
-        }
-        catch(ImageLoadException &e) {
-            img[ind - 1] = nullptr;
-            wprintf(L"ImageLoadError:%ls\n", e.e);
-        }
+        img[ind++] = FImage::FromFile(fpath);
         if(ind >= sz)
             break;
     }

@@ -2,8 +2,9 @@ CPPStandard = c++20
 HEADER = $(subst .cpp,.o,$(wildcard header/*.cpp))
 LIB = gdi32 gdiplus
 
+all: compile run
 
-all: $(HEADER) core.exe run
+compile: $(HEADER) core.exe
 
 %.o: %.cpp
 	g++ $(CPPStandard:%=-std=%) -c $^ -o $@
@@ -11,7 +12,7 @@ all: $(HEADER) core.exe run
 core.exe: $(HEADER) core.o
 	g++ $(CPPStandard:%=-std=%) $^ $(LIB:%=-l%) -o core.exe
 
-run:
+run: compile
 	core
 
 clean:
@@ -19,4 +20,4 @@ clean:
 	del header\*.o
 	del core.exe
 
-remake: clean all
+remake: clean compile

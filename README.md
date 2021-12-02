@@ -11,7 +11,7 @@ C++实验，**未完成**，仿**东方永夜抄**
 > 美术资源来自[东方永夜抄](https://www.spriters-resource.com/pc_computer/touhoueiyashouimperishablenight/)
 
 ## TODO(无先后顺序)
-- 为gdiplib中绘图函数增加自定义Pen/Brush
+- 调整drawTab函数
 - 完善背景平铺绘图
 - 完善自机死亡相关代码
 - 关卡设计
@@ -20,3 +20,7 @@ C++实验，**未完成**，仿**东方永夜抄**
 - 为背景加上线性渐变黑幕以改善画面观感
 - 完善代码注释
 - 优化代码结构
+
+## 编译
+
+> mingw32-make

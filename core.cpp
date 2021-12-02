@@ -19,16 +19,20 @@ std::forward_list<playerBullet> playerBulletList;
 std::forward_list<enemyBullet> enemyBulletList;
 //敌机弹幕
 std::forward_list<enemy> enemyList;
+//背景偏移量
+REAL bkshift = 0;
+//得分
+uint score = 0;
 
-void drawBackground();
-void drawGUI();
+void drawBackground(cREAL &shift);
+void drawTab();
 void enemyAppear();
 void playerShot();
 //计算数据、更新画面
 void runGame();
 
 void Setup() {
-    initWindow("", DEFAULT, DEFAULT, WinWidth, WinHeight);
+    initWindow("Touhou Project Imperishable Night. (Fake) ver 0.9.5", DEFAULT, DEFAULT, WinWidth, WinHeight);
     initConsole();
 
     loadResource();
@@ -41,6 +45,8 @@ void Setup() {
 }
 
 void runGame() {
+    //更新背景偏移
+    bkshift += 0.3;
     //更新自机弹幕
     for(auto i = playerBulletList.before_begin(); i._M_next() != playerBulletList.end(); ++i)
         if(!(i._M_next()->update()))
@@ -109,8 +115,8 @@ void runGame() {
     beginPaint();
 
     //重绘
-    drawBackground();
-    drawGUI();
+    drawBackground(bkshift);
+    drawTab();
 
     for(auto i: playerBulletList)
         i.draw();
@@ -153,25 +159,29 @@ void playerShot() {
 }
 
 
-void drawBackground() {
-    // TODO 更换图片
-    static REAL cnt = 0;
-    if((cnt += 0.3) > 255)
-        cnt -= 255;
-    background->drawAround(halfMapWidth, cnt);
-    if(cnt + 255 < MapHeight)
-        background->drawAround(halfMapWidth, cnt + 255);
+void drawBackground(cREAL &shift) {
+    background->drawCover(halfMapWidth, halfMapHeight, MapWidth, MapHeight, 0, shift);
+    TabBackground->drawCover(halfMapWidth + halfWinWidth, halfWinHeight, WinWidth - MapWidth, WinHeight, 0, 0);
 }
 
 WCHAR c[25];
-void drawGUI() {
-    // TODO 显示得分/生命/...
-    setPenColor(COLOR::Black);
-    setPenWidth(2);
-    setBrushColor(COLOR::White);
-    rectangle(MapWidth, -1, WinWidth - MapWidth, WinHeight + 1);
+void drawTab() {
+    // TODO 重新设计模块
     setTextAlign(Gdiplus::StringAlignment::StringAlignmentNear);
     setTextSize(20);
-    wsprintfW(c, L"Score:%010d", 50);
-    paintText(c, MapWidth + 10, 20);
+    setTextColor(COLOR::White);
+    setTextStyle(Gdiplus::FontStyle::FontStyleBold);
+    wsprintfW(c, L"Score  %010d", score);
+    paintText(c, MapWidth + 20, 35);
+    wsprintfW(c, L"Health %d", reimu.gethealth());
+    paintText(c, MapWidth + 20, 85);
+    setTextSize(15);
+    setTextStyle(Gdiplus::FontStyle::FontStyleBoldItalic);
+    setTextColor(COLOR::Aqua);
+    paintText(L"LOOP", 550, 200);
+    Symbol->drawAround(halfMapWidth + halfWinWidth, 340);
+    setTextSize(12);
+    setTextStyle(Gdiplus::FontStyle::FontStyleItalic);
+    setTextColor(COLOR::Violet);
+    paintText(L"Imperishable Night", 430, 405);
 }

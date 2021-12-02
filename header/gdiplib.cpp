@@ -164,7 +164,6 @@ void initWindow(cchar *wndName, int x, int y, int width, int height) {
 
     ASSERT(!g_hWnd, "Don't call initWindow twice");
 
-
     if(x == DEFAULT || y == DEFAULT)
         x = y = CW_USEDEFAULT;
 
@@ -249,17 +248,28 @@ void setTextLineAlign(const Gdiplus::StringAlignment &align) {
     g_stringformat->SetLineAlignment(align);
 }
 
-void line(cREAL &x1, cREAL &y1, cREAL &x2, cREAL &y2) {
+void line(cREAL &x1, cREAL &y1, cREAL &x2, cREAL &y2, const Gdiplus::Pen *_pen) {
     ASSERT_PAINT;
-    g_graphics->DrawLine(g_pen, x1, y1, x2, y2);
+    g_graphics->DrawLine(_pen ? _pen : g_pen, x1, y1, x2, y2);
 }
-void rectangle(cREAL &x, cREAL &y, cREAL &w, cREAL &h, Gdiplus::Brush *bs) {
+void rectangle(cREAL &x, cREAL &y, cREAL &w, cREAL &h, const Gdiplus::Brush *_brush) {
     ASSERT_PAINT;
-    g_graphics->FillRectangle(bs ? bs : g_brush, x, y, w, h);
+    g_graphics->FillRectangle(_brush ? _brush : g_brush, x, y, w, h);
 }
-void paintText(WString str, cREAL &x, cREAL &y) {
+void paintText(WString str, cREAL &x, cREAL &y, const Gdiplus::Brush *_brush) {
     ASSERT_PAINT;
-    g_graphics->DrawString(str, -1, g_font.get(), {x, y}, g_stringformat, g_textbrush);
+    g_graphics->DrawString(str, -1, g_font.get(), {x, y}, g_stringformat, _brush ? _brush : g_textbrush);
+}
+void paintText(WString str, cREAL &x, cREAL &y, const Gdiplus::Font *_font) {
+    ASSERT_PAINT;
+    g_graphics->DrawString(str, -1, _font, {x, y}, g_stringformat, g_textbrush);
+}
+void paintText(WString str, cREAL &x, cREAL &y, const Gdiplus::Brush *_brush, const Gdiplus::Font *_font) {
+    ASSERT_PAINT;
+    g_graphics->DrawString(str, -1, _font, {x, y}, g_stringformat, _brush);
+}
+void paintText(WString str, cREAL &x, cREAL &y, const Gdiplus::Font *_font, const Gdiplus::Brush *_brush) {
+    paintText(str, x, y, _brush, _font);
 }
 
 ImageLoadException::ImageLoadException(filePath p)
@@ -269,21 +279,27 @@ FImage::FImage(filePath filename)
   : Gdiplus::Image(filename) {
     if(this->GetLastStatus() != Gdiplus::Ok)
         throw ImageLoadException(filename);
-    w = GetWidth();
-    h = GetHeight();
+    _w = GetWidth();
+    _h = GetHeight();
 }
 FImage *FImage::FromFile(filePath filename) {
-    return new FImage(filename);
+    try {
+        return new FImage(filename);
+    }
+    catch(ImageLoadException &e) {
+        wprintf(L"ImageLoadError:%ls\n", e.e);
+        return nullptr;
+    }
 }
 uint FImage::getw() const {
-    return w;
+    return _w;
 }
 uint FImage::geth() const {
-    return h;
+    return _h;
 }
 void FImage::drawAround(cREAL &x, cREAL &y) {
     ASSERT_PAINT;
-    g_graphics->DrawImage(this, x - (w >> 1), y - (h >> 1), (REAL)w, (REAL)h);
+    g_graphics->DrawImage(this, x - (_w >> 1), y - (_h >> 1), (REAL)_w, (REAL)_h);
 }
 Gdiplus::PointF points[3];
 void FImage::drawAroundFlip(cREAL &x, cREAL &y, cbool &flip) {
@@ -291,9 +307,15 @@ void FImage::drawAroundFlip(cREAL &x, cREAL &y, cbool &flip) {
     if(!flip)
         drawAround(x, y);
     else {
-        points[0] = {x + (w >> 1), y - (h >> 1)};
-        points[1] = {x - (w >> 1), y - (h >> 1)};
-        points[2] = {x + (w >> 1), y + (h >> 1)};
+        points[0] = {x + (_w >> 1), y - (_h >> 1)};
+        points[1] = {x - (_w >> 1), y - (_h >> 1)};
+        points[2] = {x + (_w >> 1), y + (_h >> 1)};
         g_graphics->DrawImage(this, points, 3);
     }
+}
+unique_ptr<Gdiplus::TextureBrush> texbrush;
+void FImage::drawCover(cREAL &x, cREAL &y, cREAL &w, cREAL &h, cREAL &tx, cREAL &ty) {
+    texbrush = make_unique<Gdiplus::TextureBrush>(this);
+    texbrush->TranslateTransform(tx, ty);
+    g_graphics->FillRectangle(texbrush.get(), x - (w / 2), y - (h / 2), w, h);
 }

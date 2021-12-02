@@ -30,6 +30,9 @@ namespace GAME_RESOURCE {
     extern FImage *bullet_round[ENEMY_TYPE::MAXSIZE];
 
     extern FImage *background;
+    extern FImage *TabBackground;
+
+    extern FImage *Symbol;
 
     //加载图片资源
     void loadResource();

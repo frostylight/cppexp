@@ -12,6 +12,8 @@ namespace GAME_RESOURCE {
     LoopAnimation<4> enemy_easy[ENEMY_TYPE::MAXSIZE];
     FImage *bullet_round[ENEMY_TYPE::MAXSIZE];
     FImage *background;
+    FImage *TabBackground;
+    FImage *Symbol;
 
     void loadResource() {
         reimu_idle.load({L"img/reimu/idle/0.png",
@@ -33,6 +35,9 @@ namespace GAME_RESOURCE {
                                            L"img/blue/3.png"});
         bullet_round[ENEMY_TYPE::BLUE] = FImage::FromFile(L"img/blue/bullet.png");
 
-        background = FImage::FromFile(L"img/background.png");
+        background    = FImage::FromFile(L"img/background.png");
+        TabBackground = FImage::FromFile(L"img/TabBackground.png");
+
+        Symbol = FImage::FromFile(L"img/Symbol.png");
     }
 } // namespace GAME_RESOURCE
