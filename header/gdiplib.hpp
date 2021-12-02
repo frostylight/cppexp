@@ -1,5 +1,5 @@
 /**
- * @file frostylib.hpp
+ * @file gdiplib.hpp
  * @author frostylight (810560476@qq.com)
  * @brief GDI+简单包装(C++实验用)(未完成)
  * @version 0.3.1
@@ -72,6 +72,18 @@ void setPenWidth(cREAL &w);
 
 void setBrushColor(const COLOR &color);
 
+void setTextFont(WString fontname);
+
+void setTextSize(cREAL &s);
+
+void setTextStyle(const Gdiplus::FontStyle &style);
+
+void setTextColor(const COLOR &color);
+
+void setTextAlign(const Gdiplus::StringAlignment &align);
+
+void setTextLineAlign(const Gdiplus::StringAlignment &align);
+
 //绘制一条穿过(x1, y1)和(x2, y2)的直线
 void line(cREAL &x1, cREAL &y1, cREAL &x2, cREAL &y2);
 
@@ -81,7 +93,14 @@ void line(cREAL &x1, cREAL &y1, cREAL &x2, cREAL &y2);
  * @param w 矩形宽度
  * @param h 矩形高度
  */
-void rectangle(cREAL &x, cREAL &y, cREAL &w, cREAL &h);
+void rectangle(cREAL &x, cREAL &y, cREAL &w, cREAL &h, Gdiplus::Brush *bs = nullptr);
+
+/**
+ * @brief 以(x, y)为中心绘制字符串
+ *
+ * @param str 要绘制的字符串
+ */
+void paintText(WString str, cREAL &x, cREAL &y);
 
 
 //图片读取错误异常

@@ -12,7 +12,7 @@ using namespace GAME_DEFAULT_SETTING;
 using namespace GAME_RESOURCE;
 
 //自机
-player reimu(MapWidth >> 1, MapHeight * 0.8);
+player reimu(halfMapWidth, MapHeight * 0.8);
 //自机弹幕
 std::forward_list<playerBullet> playerBulletList;
 //敌机
@@ -68,7 +68,7 @@ void runGame() {
                 enemyBulletList.clear();
                 // TODO 此处应有特效，并停止所有object的update
                 //  重置自机位置
-                reimu.setxy(MapWidth >> 1, MapHeight * 0.8);
+                reimu.setxy(halfMapWidth, MapHeight * 0.8);
                 // TODO 2-3s无敌状态
                 break;
             }
@@ -132,14 +132,14 @@ void enemyAppear() {
         case 80:;
         case 90:;
         case 100:;
-            enemyList.emplace_front((MapWidth >> 2) + rand() % 41 - 20, -5, (MapWidth >> 2) + rand() % 41 - 20, MapHeight >> 1, 120);
+            enemyList.emplace_front((MapWidth >> 2) + rand() % 41 - 20, -5, (MapWidth >> 2) + rand() % 41 - 20, halfMapHeight, 120);
             break;
         case 110:;
         case 120:;
         case 130:;
         case 140:;
         case 150:;
-            enemyList.emplace_front(MapWidth - (MapWidth >> 2) + rand() % 41 - 20, -5, MapWidth - (MapWidth >> 2) + rand() % 41 - 20, MapHeight >> 1, 120);
+            enemyList.emplace_front(MapWidth - (MapWidth >> 2) + rand() % 41 - 20, -5, MapWidth - (MapWidth >> 2) + rand() % 41 - 20, halfMapHeight, 120);
             break;
     }
 }
@@ -152,17 +152,26 @@ void playerShot() {
     }
 }
 
+
 void drawBackground() {
     // TODO 更换图片
-    setBrushColor(COLOR::White);
-    rectangle(0, 0, MapWidth, MapHeight);
+    static REAL cnt = 0;
+    if((cnt += 0.3) > 255)
+        cnt -= 255;
+    background->drawAround(halfMapWidth, cnt);
+    if(cnt + 255 < MapHeight)
+        background->drawAround(halfMapWidth, cnt + 255);
 }
 
+WCHAR c[25];
 void drawGUI() {
     // TODO 显示得分/生命/...
     setPenColor(COLOR::Black);
     setPenWidth(2);
-    line(MapWidth, 0, MapWidth, WinHeight);
     setBrushColor(COLOR::White);
-    rectangle(MapWidth, 0, WinWidth - MapWidth, WinHeight);
+    rectangle(MapWidth, -1, WinWidth - MapWidth, WinHeight + 1);
+    setTextAlign(Gdiplus::StringAlignment::StringAlignmentNear);
+    setTextSize(20);
+    wsprintfW(c, L"Score:%010d", 50);
+    paintText(c, MapWidth + 10, 20);
 }

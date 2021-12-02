@@ -11,6 +11,7 @@ namespace GAME_RESOURCE {
 
     LoopAnimation<4> enemy_easy[ENEMY_TYPE::MAXSIZE];
     FImage *bullet_round[ENEMY_TYPE::MAXSIZE];
+    FImage *background;
 
     void loadResource() {
         reimu_idle.load({L"img/reimu/idle/0.png",
@@ -31,5 +32,7 @@ namespace GAME_RESOURCE {
                                            L"img/blue/2.png",
                                            L"img/blue/3.png"});
         bullet_round[ENEMY_TYPE::BLUE] = FImage::FromFile(L"img/blue/bullet.png");
+
+        background = FImage::FromFile(L"img/background.png");
     }
 } // namespace GAME_RESOURCE

@@ -1,6 +1,6 @@
 #include <memory>
 
-#include "frostylib.hpp"
+#include "gdiplib.hpp"
 
 using std::make_unique;
 using std::unique_ptr;
@@ -11,7 +11,7 @@ void Setup();
 //定义窗口所用变量
 
 cchar g_wndClassName[] = "FROSTY_WND_CLASS";
-cchar g_libName[]      = "FROSTYLIB";
+cchar g_libName[]      = "GDIPLIB";
 
 HINSTANCE g_hInstance;
 
@@ -32,14 +32,16 @@ unique_ptr<Gdiplus::Graphics> g_hdcgp;
 
 //绘图所用变量
 
-Gdiplus::Pen *g_pen          = nullptr;
-Gdiplus::SolidBrush *g_brush = nullptr;
-/*
-Gdiplus::FontFamily *g_fontfamily = nullptr;
-Gdiplus::Font *g_font = nullptr;
-Gdiplus::SolidBrush *g_textbrush = nullptr;
+Gdiplus::Pen *g_pen                   = nullptr;
+Gdiplus::SolidBrush *g_brush          = nullptr;
+Gdiplus::SolidBrush *g_textbrush      = nullptr;
 Gdiplus::StringFormat *g_stringformat = nullptr;
-*/
+unique_ptr<Gdiplus::FontFamily> g_fontfamily;
+unique_ptr<Gdiplus::Font> g_font;
+REAL g_fontsize                = 15;
+Gdiplus::FontStyle g_fontstyle = Gdiplus::FontStyleRegular;
+Gdiplus::Unit g_fontunit       = Gdiplus::UnitPixel;
+
 
 //计时器变量
 voidF timer[0xff];
@@ -99,15 +101,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
             //初始化GDI+及相关变量
 
             Gdiplus::GdiplusStartup(&m_pGdiToken, &m_gdiplusStartupInput, nullptr);
-            g_pen   = new Gdiplus::Pen(COLOR::Aqua);
-            g_brush = new Gdiplus::SolidBrush(COLOR::Aqua);
-            /*
-            g_fontfamily = new Gdiplus::FontFamily(L"楷体");
-            g_font = new Gdiplus::Font(g_fontfamily, 10, Gdiplus::FontStyleRegular, Gdiplus::UnitPixel);
-            g_textbrush = new Gdiplus::SolidBrush(COLOR::Black);
+            g_pen          = new Gdiplus::Pen(COLOR::Aqua);
+            g_brush        = new Gdiplus::SolidBrush(COLOR::Aqua);
+            g_textbrush    = new Gdiplus::SolidBrush(COLOR::Black);
+            g_fontfamily   = make_unique<Gdiplus::FontFamily>(L"Consolas");
+            g_font         = make_unique<Gdiplus::Font>(g_fontfamily.get(), g_fontsize, g_fontstyle, g_fontunit);
             g_stringformat = new Gdiplus::StringFormat(Gdiplus::StringFormat::GenericDefault());
             g_stringformat->SetAlignment(Gdiplus::StringAlignmentCenter);
-            */
             break;
         }
 
@@ -229,14 +229,37 @@ void setPenWidth(cREAL &w) {
 void setBrushColor(const COLOR &color) {
     g_brush->SetColor(color);
 }
+void setTextFont(WString fontname) {
+    g_fontfamily.reset(new Gdiplus::FontFamily(fontname));
+    g_font.reset(new Gdiplus::Font(g_fontfamily.get(), g_fontsize, g_fontstyle, g_fontunit));
+}
+void setTextSize(cREAL &s) {
+    g_font.reset(new Gdiplus::Font(g_fontfamily.get(), g_fontsize = s, g_fontstyle, g_fontunit));
+}
+void setTextStyle(const Gdiplus::FontStyle &style) {
+    g_font.reset(new Gdiplus::Font(g_fontfamily.get(), g_fontsize, g_fontstyle = style, g_fontunit));
+}
+void setTextColor(const COLOR &color) {
+    g_textbrush->SetColor(color);
+}
+void setTextAlign(const Gdiplus::StringAlignment &align) {
+    g_stringformat->SetAlignment(align);
+}
+void setTextLineAlign(const Gdiplus::StringAlignment &align) {
+    g_stringformat->SetLineAlignment(align);
+}
 
 void line(cREAL &x1, cREAL &y1, cREAL &x2, cREAL &y2) {
     ASSERT_PAINT;
     g_graphics->DrawLine(g_pen, x1, y1, x2, y2);
 }
-void rectangle(cREAL &x, cREAL &y, cREAL &w, cREAL &h) {
+void rectangle(cREAL &x, cREAL &y, cREAL &w, cREAL &h, Gdiplus::Brush *bs) {
     ASSERT_PAINT;
-    g_graphics->FillRectangle(g_brush, x, y, w, h);
+    g_graphics->FillRectangle(bs ? bs : g_brush, x, y, w, h);
+}
+void paintText(WString str, cREAL &x, cREAL &y) {
+    ASSERT_PAINT;
+    g_graphics->DrawString(str, -1, g_font.get(), {x, y}, g_stringformat, g_textbrush);
 }
 
 ImageLoadException::ImageLoadException(filePath p)

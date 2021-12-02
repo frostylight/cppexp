@@ -17,6 +17,7 @@ using cREAL = const REAL;
 using cuit  = const uint;
 
 using filePath = const WCHAR *;
+using WString  = const WCHAR *;
 
 template<typename T>
 inline T abs(const T &x) {

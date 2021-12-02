@@ -1,6 +1,6 @@
 #pragma once
 
-#include "frostylib.hpp"
+#include "gdiplib.hpp"
 
 template<uint sz>
 using LoopAnimation = Animation<sz, 8>;
@@ -28,6 +28,8 @@ namespace GAME_RESOURCE {
     extern LoopAnimation<4> enemy_easy[ENEMY_TYPE::MAXSIZE];
     //敌机弹幕
     extern FImage *bullet_round[ENEMY_TYPE::MAXSIZE];
+
+    extern FImage *background;
 
     //加载图片资源
     void loadResource();
