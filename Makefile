@@ -1,6 +1,6 @@
 CPPStandard = c++20
 HEADER = $(subst .cpp,.o,$(wildcard header/*.cpp))
-LIB = gdi32 gdiplus
+LIB = gdi32 gdiplus winmm
 
 all: compile run
 

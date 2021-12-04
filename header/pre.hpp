@@ -14,12 +14,7 @@ using cbool = const bool;
 
 using cbyte = const byte;
 using cREAL = const REAL;
-using cuit  = const uint;
+using cuint = const uint;
 
 using filePath = const WCHAR *;
 using WString  = const WCHAR *;
-
-template<typename T>
-inline T abs(const T &x) {
-    return x >= 0 ? x : -x;
-}
