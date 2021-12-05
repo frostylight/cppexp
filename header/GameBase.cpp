@@ -54,7 +54,7 @@ namespace Base {
 
 #pragma region chara
     chara::chara(cREAL &x, cREAL &y, cint &health)
-      : object(x, y), _health(health) {}
+      : object(x, y), _health(health), _cd(1) {}
     int chara::gethealth() const {
         return _health;
     }
@@ -70,8 +70,17 @@ namespace Base {
     bool chara::dead() const {
         return _health <= 0;
     }
+    bool chara::bulletReady() const {
+        return _state && _cd == getbulletCD();
+    }
     bool chara::active() const {
         return object::active() && _health > 0;
+    }
+    void chara::update() {
+        if(_cd == getbulletCD())
+            _cd = 1;
+        else
+            ++_cd;
     }
 #pragma endregion
 
@@ -88,16 +97,7 @@ namespace Base {
 
 #pragma region enemy
     enemy::enemy(cREAL &x, cREAL &y, cint &health)
-      : chara(x, y, health), _cd(1) {}
-    bool enemy::bulletReady() const {
-        return _state && _cd == getbulletCD();
-    }
-    void enemy::update() {
-        if(_cd == getbulletCD())
-            _cd = 1;
-        else
-            ++_cd;
-    }
+      : chara(x, y, health) {}
 #pragma endregion
 
 #pragma region drop
@@ -119,15 +119,15 @@ namespace Base {
 #pragma region playerbullet
     playerbullet::playerbullet(cREAL &x, cREAL &y, cREAL &dx, cREAL &dy, cuint &damage)
       : bullet(x, y, dx, dy, damage) {}
-    playerbullet::playerbullet(const player &p, cREAL &dx, cREAL &dy, cuint &damage)
-      : bullet(p._x, p._y, dx, dy, damage) {}
+    playerbullet::playerbullet(const player *const p, cREAL &dx, cREAL &dy, cuint &damage)
+      : bullet(p->_x, p->_y, dx, dy, damage) {}
 #pragma endregion
 
 #pragma region enemybullet
     enemybullet::enemybullet(cREAL &x, cREAL &y, cREAL &dx, cREAL &dy, cuint &damage)
       : bullet(x, y, dx, dy, damage) {}
-    enemybullet::enemybullet(const enemy &e, cREAL &dx, cREAL &dy, cuint &damage)
-      : bullet(e._x, e._y, dx, dy, damage) {}
+    enemybullet::enemybullet(const enemy *const e, cREAL &dx, cREAL &dy, cuint &damage)
+      : bullet(e->_x, e->_y, dx, dy, damage) {}
 #pragma endregion
 
 } // namespace Base
