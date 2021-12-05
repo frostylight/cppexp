@@ -19,18 +19,27 @@ namespace Base {
         void setx(cREAL &x);
         void sety(cREAL &y);
         void setxy(cREAL &x, cREAL &y);
+        //获取碰撞箱宽度
         virtual uint getw() const = 0;
+        //获取碰撞箱高度
         virtual uint geth() const = 0;
 
+        // object是否失效
         virtual bool active() const;
+        //使object失效
         void disable();
 
+        //碰撞箱是否在画面内
         bool inscreenB(cREAL &width, cREAL &height) const;
+        //是否在画面内
         bool inscreen(cREAL &width, cREAL &height) const;
 
-        virtual void update()     = 0;
+        //数据更新
+        virtual void update() = 0;
+        //绘制object
         virtual void draw() const = 0;
 
+        //碰撞检测
         bool collide(const object *const obj) const;
     };
 

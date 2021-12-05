@@ -36,7 +36,7 @@ Gdiplus::FontStyle g_fontstyle = Gdiplus::FontStyleRegular;
 Gdiplus::Unit g_fontunit       = Gdiplus::UnitPixel;
 
 //计时器序号
-uint timerid[255];
+uint timerid[0xff];
 
 //键盘记录变量
 bool keyhold[0xff];

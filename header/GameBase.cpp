@@ -8,7 +8,7 @@ T abs(const T &x) {
 namespace Base {
 #pragma region object
     object::object(cREAL &x, cREAL &y)
-      : _x(x), _y(y), _state(1) {}
+      : _x(x), _y(y), _state(true) {}
     REAL object::getx() const {
         return _x;
     }
@@ -29,14 +29,16 @@ namespace Base {
         return _state;
     }
     void object::disable() {
-        _state = 0;
+        _state = false;
     }
     bool object::inscreenB(cREAL &width, cREAL &height) const {
-        return (getw() >> 1) <= _x && _x + (getw() >> 1) <= width &&
+        return _state &&
+               (getw() >> 1) <= _x && _x + (getw() >> 1) <= width &&
                (geth() >> 1) <= _y && _y + (geth() >> 1) <= height;
     }
     bool object::inscreen(cREAL &width, cREAL &height) const {
-        return 0 <= _x && _x <= width &&
+        return _state &&
+               0 <= _x && _x <= width &&
                0 <= _y && _y <= height;
     }
     bool object::collide(const object *const obj) const {
@@ -45,7 +47,8 @@ namespace Base {
 #pragma endregion
 
     bool collide(const object *const obj1, const object *const obj2) {
-        return abs(obj1->_x - obj2->_x) <= ((obj1->getw() + obj2->getw()) >> 1) &&
+        return obj1->_state && obj2->_state &&
+               (obj1->_x - obj2->_x) <= ((obj1->getw() + obj2->getw()) >> 1) &&
                abs(obj1->_y - obj2->_y) <= ((obj1->geth() + obj2->geth()) >> 1);
     }
 
@@ -85,9 +88,9 @@ namespace Base {
 
 #pragma region enemy
     enemy::enemy(cREAL &x, cREAL &y, cint &health)
-      : chara(x, y, health), _cd(0) {}
+      : chara(x, y, health), _cd(1) {}
     bool enemy::bulletReady() const {
-        return _cd == getbulletCD();
+        return _state && _cd == getbulletCD();
     }
     void enemy::update() {
         if(_cd == getbulletCD())
@@ -101,6 +104,8 @@ namespace Base {
     drop::drop(cREAL &x, cREAL &y, cREAL &dx, cREAL &dy)
       : object(x, y), _dx(dx), _dy(dy) {}
     void drop::update() {
+        if(!_state)
+            return;
         _x += _dx;
         _y += _dy;
     }
