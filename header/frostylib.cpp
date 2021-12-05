@@ -188,7 +188,6 @@ namespace FROSTYLIB {
         freopen("CONOUT$", "w+t", stdout);
     }
 
-
     void startTimer(cbyte &timerID, cuint &timeinterval, TIMERFUNC f) {
         // SetTimer(g_hWnd, timerID, timeinterval, f);
         timerid[timerID] = timeSetEvent(timeinterval, 0, f, 0, TIME_KILL_SYNCHRONOUS | TIME_PERIODIC | TIME_CALLBACK_FUNCTION);
@@ -216,7 +215,6 @@ namespace FROSTYLIB {
         InvalidateRect(g_hWnd, 0, false);
     }
 
-
     void setPenColor(const COLOR &color) {
         g_pen->SetColor(color);
     }
@@ -224,11 +222,9 @@ namespace FROSTYLIB {
         g_pen->SetWidth(w);
     }
 
-
     void setBrushColor(const COLOR &color) {
         g_brush->SetColor(color);
     }
-
 
     void setTextFont(WString fontname) {
         g_fontfamily.reset(new Gdiplus::FontFamily(fontname));
@@ -250,7 +246,6 @@ namespace FROSTYLIB {
         g_stringformat->SetLineAlignment(align);
     }
 
-
     void line(cREAL &x1, cREAL &y1, cREAL &x2, cREAL &y2, const Gdiplus::Pen *_pen) {
         ASSERT_PAINT;
         g_graphics->DrawLine(_pen ? _pen : g_pen, x1, y1, x2, y2);
@@ -259,7 +254,6 @@ namespace FROSTYLIB {
         ASSERT_PAINT;
         g_graphics->FillRectangle(_brush ? _brush : g_brush, x, y, w, h);
     }
-
 
     void paintText(WString str, cREAL &x, cREAL &y, const Gdiplus::Font *_font, const Gdiplus::StringFormat *_format, const Gdiplus::Brush *_brush) {
         ASSERT_PAINT;
@@ -278,10 +272,9 @@ namespace FROSTYLIB {
         paintText(str, x, y, g_font.get(), g_stringformat, g_textbrush);
     }
 
-
+#pragma region Img
     Gdiplus::PointF points[3];
     unique_ptr<Gdiplus::TextureBrush> texbrush;
-
     Img::Img(filePath filename)
       : Gdiplus::Image(filename) {
         if(this->GetLastStatus() != Gdiplus::Ok)
@@ -333,16 +326,18 @@ namespace FROSTYLIB {
     void Img::FillRectC(cREAL &x, cREAL &y, cREAL &w, cREAL &h, cREAL &sx, cREAL &sy) {
         FillRect(x - (pw >> 1), y - (ph >> 1), w, h, sx, sy);
     }
+#pragma endregion
 
+#pragma region ImgList
     ImgList::ImgList()
       : count(0), interval(0), now(0), imgindex(0), imglist(nullptr) {}
-    ImgList::ImgList(const filePathList &pathlist, cuint &duration)
+    ImgList::ImgList(cuint &duration, const filePathList &pathlist)
       : count(pathlist.size()), interval(duration), imgindex(0), now(0) {
         imglist = new Img *[count];
         for(int i = 0; auto path: pathlist)
             imglist[i++] = Img::FromFile(path);
     }
-    void ImgList::reload(const filePathList &pathlist, cuint &duration) {
+    void ImgList::load(cuint &duration, const filePathList &pathlist) {
         if(count) {
             for(int i = 0; i < count; ++i)
                 delete imglist[i];
@@ -381,7 +376,9 @@ namespace FROSTYLIB {
         imglist[imgindex]->drawFlipC(x, y);
         next();
     }
+#pragma endregion
 
+#pragma region StopWatch
     StopWatch::StopWatch() {
         if(QueryPerformanceFrequency(&Fre) == 0)
             throw L"按官方文档来说XP及以后的系统都是支持的...";
@@ -409,4 +406,6 @@ namespace FROSTYLIB {
             return 1.0 * (temp.QuadPart - st.QuadPart) / Fre.QuadPart;
         }
     }
+#pragma endregion
+
 } // namespace FROSTYLIB

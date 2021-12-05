@@ -85,7 +85,9 @@ namespace FROSTYLIB {
     struct ImageLoadException {};
 
     //重封装的图片类
-    class Img: public Gdiplus::Image {
+    class Img: Gdiplus::Image {
+        friend class ImgList;
+
         uint pw, ph;
 
         Img(filePath filename);
@@ -118,11 +120,12 @@ namespace FROSTYLIB {
 
         inline void next();
 
+        ImgList(cuint &duration, const filePathList &pathlist);
+
       public:
         ImgList();
-        ImgList(const filePathList &pathlist, cuint &duration);
 
-        void reload(const filePathList &pathlist, cuint &duration);
+        void load(cuint &duration, const filePathList &pathlist);
 
         inline uint getTotalTime() const;
 
@@ -149,4 +152,5 @@ namespace FROSTYLIB {
         void restart();
         double getsecond();
     };
+
 } // namespace FROSTYLIB
