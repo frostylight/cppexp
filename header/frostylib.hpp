@@ -16,10 +16,13 @@
 
 #include "pre.hpp"
 
-#define UNUSED_TIMER_PARAM UINT __UNUSED0, UINT __UNUSED1, DWORD_PTR __UNUSED2, DWORD_PTR __UNUSED3, DWORD_PTR __UNUSED4
+#define UNUSED_TIMER_PARAM HWND UNUSED0, UINT UNUSED1, UINT_PTR UNUSED2, DWORD UNUSED3
+#define TIMER(x) void CALLBACK x(UNUSED_TIMER_PARAM)
+#define CALLTIMER(x) x(NULL, NULL, NULL, NULL)
 
 using filePathList = std::initializer_list<filePath>;
 using COLOR        = Gdiplus::Color;
+using TIMERFUNC    = TIMERPROC;
 
 
 void ERROR_MSG(cchar *str);
@@ -41,8 +44,6 @@ namespace FROSTYLIB {
      */
     void initWindow(cchar *title, int left, int top, int width, int height);
     void initConsole(void);
-
-    using TIMERFUNC = LPTIMECALLBACK;
 
     //设置一个编号为timerID的计时器，每过timeinterval毫秒调用一次f
     void startTimer(cbyte &timerID, cuint &timeinterval, TIMERFUNC f);
@@ -85,7 +86,7 @@ namespace FROSTYLIB {
     struct ImageLoadException {};
 
     //重封装的图片类
-    class Img: Gdiplus::Image {
+    class Img: public Gdiplus::Image {
         friend class ImgList;
 
         uint pw, ph;
@@ -118,7 +119,7 @@ namespace FROSTYLIB {
         uint imgindex, now;
         Img **imglist;
 
-        inline void next();
+        void next();
 
         ImgList(cuint &duration, const filePathList &pathlist);
 
@@ -127,7 +128,7 @@ namespace FROSTYLIB {
 
         void load(cuint &duration, const filePathList &pathlist);
 
-        inline uint getTotalTime() const;
+        uint getTotalTime() const;
 
         //重置进度
         void restart();

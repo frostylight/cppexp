@@ -35,8 +35,8 @@ REAL g_fontsize                = 15;
 Gdiplus::FontStyle g_fontstyle = Gdiplus::FontStyleRegular;
 Gdiplus::Unit g_fontunit       = Gdiplus::UnitPixel;
 
-//计时器序号
-uint timerid[0xff];
+//计时器
+bool timerid[0xff];
 
 //键盘记录变量
 bool keyhold[0xff];
@@ -123,7 +123,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
             EndPaint(hwnd, &ps);
             g_bitmap.reset();
             g_graphics.reset();
-
             break;
         }
 
@@ -138,9 +137,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
         }
 
         case WM_DESTROY: {
-            for(uint id: timerid)
-                if(id)
-                    timeKillEvent(id);
+            for(int i = 0; i < 0xff; ++i)
+                if(timerid[i])
+                    KillTimer(g_hWnd, i);
             Gdiplus::GdiplusShutdown(m_pGdiToken);
             PostQuitMessage(0);
             break;
@@ -189,13 +188,12 @@ namespace FROSTYLIB {
     }
 
     void startTimer(cbyte &timerID, cuint &timeinterval, TIMERFUNC f) {
-        // SetTimer(g_hWnd, timerID, timeinterval, f);
-        timerid[timerID] = timeSetEvent(timeinterval, 0, f, 0, TIME_KILL_SYNCHRONOUS | TIME_PERIODIC | TIME_CALLBACK_FUNCTION);
+        SetTimer(g_hWnd, timerID, timeinterval, f);
+        timerid[timerID] = true;
     }
     void cancelTimer(cbyte &timerID) {
-        // KillTimer(g_hWnd, timerID);
-        timeKillEvent(timerid[timerID]);
-        timerid[timerID] = 0;
+        KillTimer(g_hWnd, timerID);
+        timerid[timerID] = false;
     }
 
     bool ishold(cbyte &key) {
@@ -213,6 +211,7 @@ namespace FROSTYLIB {
     void endPaint() {
         ASSERT_PAINT;
         InvalidateRect(g_hWnd, 0, false);
+        UpdateWindow(g_hWnd);
     }
 
     void setPenColor(const COLOR &color) {
