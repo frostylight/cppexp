@@ -3,11 +3,9 @@
 #include "frostylib.hpp"
 
 namespace Resource {
-    enum ReimuAnima { Idle,
-                      LeftRight,
-                      Turn };
-
-    extern FROSTYLIB::ImgList Reimu[3];
+    extern FROSTYLIB::ImgList Reimu_Idle;
+    extern FROSTYLIB::ImgList Reimu_LR;
+    extern FROSTYLIB::ImgList Reimu_Turn;
     extern FROSTYLIB::Img *SpellCard;
 
     extern FROSTYLIB::ImgList EnemyE;

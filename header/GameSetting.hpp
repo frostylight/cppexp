@@ -4,16 +4,16 @@
 
 
 namespace Setting {
-    constexpr char title[] = "Touhou Project Imperishable Night. (Fake) ver 0.9.5";
-
-    constexpr uint FramePerSecond = 60;
-
     namespace Game {
+        constexpr char title[] = "Touhou Project Imperishable Night. (Fake) ver 0.9.5";
+
+        constexpr uint FramePerSecond = 60;
+
         constexpr uint WinWidth = 640, WinHeight = 480;
         constexpr uint MapWidth = 400, MapHeight = WinHeight;
 
         constexpr uint halfWinWidth = WinWidth >> 1, halfWinHeight = WinHeight >> 1;
-        constexpr uint halfMapWidth = MapWidth >> 1, halfMapHeight = halfMapHeight >> 1;
+        constexpr uint halfMapWidth = MapWidth >> 1, halfMapHeight = MapHeight >> 1;
 
         constexpr uint SpawnX = halfMapWidth, SpawnY = MapHeight * 0.75;
 
