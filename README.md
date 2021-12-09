@@ -8,7 +8,8 @@ C++实验，**未完成**，仿**东方永夜抄**
 | gcc       | 11.2.0 |
 | mingw-w64 | 9.0.0  |
 
-> 美术资源来自[东方永夜抄](https://www.spriters-resource.com/pc_computer/touhoueiyashouimperishablenight/)
+> 美术与音乐资源来自[东方永夜抄],自己提取了一遍
+
 
 ## TODO(无先后顺序)
 - 调整drawTab函数
