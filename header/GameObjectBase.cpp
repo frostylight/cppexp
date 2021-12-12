@@ -1,7 +1,7 @@
-#include "GameBase.hpp"
+#include "GameObjectBase.hpp"
 
 
-namespace Base {
+namespace ObjectBase {
     object::object(const REAL &x, const REAL &y)
       : _x(x), _y(y) {}
 
@@ -19,4 +19,4 @@ namespace Base {
     chara::chara(const int &health)
       : _health(health) {}
 
-} // namespace Base
+} // namespace ObjectBase

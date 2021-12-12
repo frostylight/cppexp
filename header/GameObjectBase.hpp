@@ -3,7 +3,7 @@
 #include "stdpre.hpp"
 
 
-namespace Base {
+namespace ObjectBase {
     //所有物体的基类
     class object {
       protected:
@@ -75,4 +75,4 @@ namespace Base {
         using bullet::bullet;
     };
 
-} // namespace Base
+} // namespace ObjectBase

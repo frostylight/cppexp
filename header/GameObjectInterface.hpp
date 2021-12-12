@@ -1,12 +1,12 @@
 #pragma once
 
-#include "GameBase.hpp"
+#include "GameObjectBase.hpp"
 
 
-namespace Interface {
+namespace ObjectInterface {
     //碰撞箱接口
     template<typename T>
-    class IBox: virtual public Base::object {
+    class IBox: virtual public ObjectBase::object {
       public:
         //碰撞检测
         template<typename U>
@@ -20,4 +20,4 @@ namespace Interface {
         }
         IBox() {}
     };
-} // namespace Interface
+} // namespace ObjectInterface
