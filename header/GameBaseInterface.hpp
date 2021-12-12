@@ -2,6 +2,7 @@
 
 #include "GameBase.hpp"
 
+
 namespace Interface {
     //碰撞箱接口
     template<typename T>

@@ -1,8 +1,8 @@
 /**
  * @file frostylib.hpp
- * @author frostylight (810560476@qq.com)
- * @brief acllib改造(C++实验用)(未完成)
- * @version 0.5.1
+ * @author frostylight
+ * @brief 仿ACLlib(C++实验用)(未完成)
+ * @version 0.5.5
  * @date 2021-12-5
  *
  * @copyright Copyright (c) 2021
