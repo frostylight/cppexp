@@ -12,23 +12,20 @@
 #include <windows.h>
 #include <gdiplus.h>
 
-#include <initializer_list>
-
-#include "pre.hpp"
+#include "stdpre.hpp"
 
 #define UNUSED_TIMER_PARAM HWND UNUSED0, UINT UNUSED1, UINT_PTR UNUSED2, DWORD UNUSED3
 #define TIMER(x) void CALLBACK x(UNUSED_TIMER_PARAM)
-#define CALLTIMER(x) x(NULL, NULL, NULL, NULL)
+#define CALLTIMER(x) x(0, 0, 0, 0)
 
-using filePathList = std::initializer_list<filePath>;
-using COLOR        = Gdiplus::Color;
-using TIMERFUNC    = TIMERPROC;
+constexpr int DEFAULT = -1;
+
+using COLOR     = Gdiplus::Color;
+using TIMERFUNC = TIMERPROC;
 
 
-void ERROR_MSG(cchar *str);
-void ERROR_MSG(WString str);
-void WARNING_MSG(cchar *str);
-void WARNING_MSG(WString str);
+void ERROR_MSG(wstring str);
+void WARNING_MSG(wstring str);
 
 void Setup(void);
 
@@ -42,109 +39,85 @@ namespace FROSTYLIB {
      * @param width 窗口宽度
      * @param height 窗口高度
      */
-    void initWindow(cchar *title, int left, int top, int width, int height);
+    void initWindow(const char *title, int left, int top, int width, int height);
     void initConsole(void);
 
     //设置一个编号为timerID的计时器，每过timeinterval毫秒调用一次f
-    void startTimer(cbyte &timerID, cuint &timeinterval, TIMERFUNC f);
+    void startTimer(const byte &timerID, const uint &timeinterval, TIMERFUNC f);
 
     //取消编号为timerID的定时器
-    void cancelTimer(cbyte &timerID);
+    void cancelTimer(const byte &timerID);
 
     //判断按键key(VK-Code)是否被按下
-    bool ishold(cbyte &key);
+    bool ishold(const byte &key);
+
+    void loadSound(const uint &index, wstring sound);
+    void playSound(const uint &index, const bool &repeat = false);
+    void stopSound(const uint &index);
+    void setVolume(const uint &index, const uint &volume);
 
     void beginPaint();
     void endPaint();
 
     void setPenColor(const COLOR &color);
-    void setPenWidth(cREAL &w);
+    void setPenWidth(const REAL &w);
 
     void setBrushColor(const COLOR &color);
 
-    void setTextFont(WString fontname);
-    void setTextSize(cREAL &s);
+    void setTextFont(wstring fontname);
+    void setTextSize(const REAL &s);
     void setTextStyle(const Gdiplus::FontStyle &style);
     void setTextColor(const COLOR &color);
     void setTextAlign(const Gdiplus::StringAlignment &align);
     void setTextLineAlign(const Gdiplus::StringAlignment &align);
 
     //绘制一条穿过(x1, y1), (x2, y2)的直线
-    void line(cREAL &x1, cREAL &y1, cREAL &x2, cREAL &y2, const Gdiplus::Pen *_pen = nullptr);
+    void line(const REAL &x1, const REAL &y1, const REAL &x2, const REAL &y2, const Gdiplus::Pen *_pen = nullptr);
 
     //以(x, y)为左上角，w为宽、h为高填充矩形
-    void rectangle(cREAL &x, cREAL &y, cREAL &w, cREAL &h, const Gdiplus::Brush *_brush = nullptr);
+    void rectangle(const REAL &x, const REAL &y, const REAL &w, const REAL &h, const Gdiplus::Brush *_brush = nullptr);
 
-    void paintText(WString str, cREAL &x, cREAL &y, const Gdiplus::Font *_font, const Gdiplus::StringFormat *_format, const Gdiplus::Brush *_brush);
-    void paintText(WString str, cREAL &x, cREAL &y, const Gdiplus::Font *_font, const Gdiplus::Brush *_brush);
-    void paintText(WString str, cREAL &x, cREAL &y, const Gdiplus::Font *_font);
-    void paintText(WString str, cREAL &x, cREAL &y, const Gdiplus::Brush *_brush);
+    void paintText(wstring str, const REAL &x, const REAL &y, const Gdiplus::Font *_font, const Gdiplus::StringFormat *_format, const Gdiplus::Brush *_brush);
+    void paintText(wstring str, const REAL &x, const REAL &y, const Gdiplus::Font *_font, const Gdiplus::Brush *_brush);
+    void paintText(wstring str, const REAL &x, const REAL &y, const Gdiplus::Font *_font);
+    void paintText(wstring str, const REAL &x, const REAL &y, const Gdiplus::Brush *_brush);
     //在(x, y)处绘制字符串str
-    void paintText(WString str, cREAL &x, cREAL &y);
+    void paintText(wstring str, const REAL &x, const REAL &y);
 
     //图片读取错误异常
     struct ImageLoadException {};
 
     //重封装的图片类
     class Img: public Gdiplus::Image {
-        friend class ImgList;
+        uint _pw, _ph;
 
-        uint pw, ph;
-
-        Img(filePath filename);
+        Img(wstring filename);
 
       public:
-        static Img *FromFile(filePath filename);
+        static Img *FromFile(wstring filename);
 
         inline uint getw() const;
         inline uint geth() const;
 
         //以(x, y)为左上角绘图
-        void draw(cREAL &x, cREAL &y);
+        void draw(const REAL &x, const REAL &y);
         //以(x, y)为中心绘图
-        void drawC(cREAL &x, cREAL &y);
+        void drawC(const REAL &x, const REAL &y);
         //以(x, y)为左上角绘图，flip决定是否水平翻转
-        void drawFlip(cREAL &x, cREAL &y, cbool &flip = true);
+        void drawFlip(const REAL &x, const REAL &y, const bool &flip = true);
         //以(x, y)为中心绘图，flip决定是否水平翻转
-        void drawFlipC(cREAL &x, cREAL &y, cbool &flip = true);
+        void drawFlipC(const REAL &x, const REAL &y, const bool &flip = true);
         //以(x, y)为左上角，(sx, sy)为图片偏移量，平铺宽为w、高为h的矩形
-        void FillRect(cREAL &x, cREAL &y, cREAL &w, cREAL &h, cREAL &sx = 0, cREAL &sy = 0);
+        void FillRect(const REAL &x, const REAL &y, const REAL &w, const REAL &h, const REAL &sx = 0, const REAL &sy = 0);
         //以(x, y)为中心，(sx, sy)为图片偏移量，平铺宽为w、高为h的矩形
-        void FillRectC(cREAL &x, cREAL &y, cREAL &w, cREAL &h, cREAL &sx = 0, cREAL &sy = 0);
-    };
-
-    //图片序列
-    class ImgList {
-        uint count, interval;
-        uint imgindex, now;
-        Img **imglist;
-
-        void next();
-
-        ImgList(cuint &duration, const filePathList &pathlist);
-
-      public:
-        ImgList();
-
-        void load(cuint &duration, const filePathList &pathlist);
-
-        uint getTotalTime() const;
-
-        //重置进度
-        void restart();
-        //以(x, y)为左上角绘制一帧
-        void draw(cREAL &x, cREAL &y);
-        //以(x, y)为中心绘制一帧
-        void drawC(cREAL &x, cREAL &y);
-        //以(x, y)为左上角绘制一帧，flip决定是否水平翻转
-        void drawFlip(cREAL &x, cREAL &y, cbool &flip = true);
-        //以(x, y)为中心绘制一帧，flip决定是否水平翻转
-        void drawFlipC(cREAL &x, cREAL &y, cbool &flip = true);
+        void FillRectC(const REAL &x, const REAL &y, const REAL &w, const REAL &h, const REAL &sx = 0, const REAL &sy = 0);
     };
 
     //封装过后的高精度计时器
     class StopWatch {
-        LARGE_INTEGER Fre, st, ed;
+        static LARGE_INTEGER Fre;
+
+        LARGE_INTEGER st, ed;
 
       public:
         StopWatch();

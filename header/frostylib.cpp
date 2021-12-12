@@ -10,8 +10,8 @@ using std::unique_ptr;
 
 void Setup();
 
-HWND g_hWnd          = nullptr;
-cchar g_wndClsName[] = "FROSTY_WND_CLASS";
+HWND g_hWnd               = nullptr;
+const char g_wndClsName[] = "FROSTY_WND_CLASS";
 RECT rect;
 
 
@@ -42,25 +42,21 @@ bool timerid[0xff];
 bool keyhold[0xff];
 
 
-cchar g_libName[]        = "FROSTYLIB";
-const WCHAR g_libNameW[] = L"FROSTYLIB";
+const char g_libName[]   = "FROSTYLIB";
+const wchar g_libNameW[] = L"FROSTYLIB";
 
-void ERROR_MSG(cchar *str) {
-    MessageBoxA(g_hWnd, str, g_libName, MB_ICONERROR);
+void ERROR_MSG(wstring str) {
+    MessageBoxW(g_hWnd ? g_hWnd : nullptr, str, g_libNameW, MB_ICONERROR);
     exit(0);
 }
-void ERROR_MSG(WString str) {
-    MessageBoxW(g_hWnd, str, g_libNameW, MB_ICONERROR);
-    exit(0);
+void WARNING_MSG(wstring str) {
+    MessageBoxW(g_hWnd ? g_hWnd : nullptr, str, g_libNameW, MB_ICONWARNING);
 }
-void WARNING_MSG(cchar *str) {
-    MessageBoxA(g_hWnd, str, g_libName, MB_ICONWARNING);
-}
-void WARNING_MSG(WString str) {
-    MessageBoxW(g_hWnd, str, g_libNameW, MB_ICONWARNING);
+void ASSERT(const bool &state, wstring errstr) {
+    if(!state)
+        ERROR_MSG(errstr);
 }
 
-#define ASSERT(_Expression, str) (!!(_Expression)) || (ERROR_MSG(str), 0)
 #define ASSERT_PAINT ASSERT(g_graphics &&g_bitmap, L"你应该在绘图前调用beginPaint()")
 
 
@@ -80,10 +76,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     wndclass.lpszMenuName  = NULL;
     wndclass.lpszClassName = g_wndClsName;
 
-    if(!RegisterClassA(&wndclass)) {
-        MessageBoxA(NULL, "This program requires Windows NT!", g_libName, MB_ICONERROR);
-        return 0;
-    }
+    ASSERT(RegisterClassA(&wndclass), L"程序仅支持Windows系统");
 
     Setup();
 
@@ -153,7 +146,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
 
 namespace FROSTYLIB {
 
-    void initWindow(cchar *wndName, int x, int y, int width, int height) {
+    void initWindow(const char *wndName, int x, int y, int width, int height) {
         if(g_hWnd) {
             WARNING_MSG(L"不要调用两次initWindow()");
             return;
@@ -169,10 +162,8 @@ namespace FROSTYLIB {
           width, height,
           NULL, NULL, 0, NULL);
 
-        if(!g_hWnd) {
-            MessageBoxW(NULL, L"创建窗口失败", g_libNameW, MB_ICONERROR);
-            exit(0);
-        }
+        ASSERT(g_hWnd, L"创建窗口失败");
+
         GetClientRect(g_hWnd, &rect);
         width += width - (rect.right - rect.left);
         height += height - (rect.bottom - rect.top);
@@ -187,17 +178,49 @@ namespace FROSTYLIB {
         freopen("CONOUT$", "w+t", stdout);
     }
 
-    void startTimer(cbyte &timerID, cuint &timeinterval, TIMERFUNC f) {
+    void startTimer(const byte &timerID, const uint &timeinterval, TIMERFUNC f) {
         SetTimer(g_hWnd, timerID, timeinterval, f);
         timerid[timerID] = true;
     }
-    void cancelTimer(cbyte &timerID) {
+    void cancelTimer(const byte &timerID) {
         KillTimer(g_hWnd, timerID);
         timerid[timerID] = false;
     }
 
-    bool ishold(cbyte &key) {
+    bool ishold(const byte &key) {
         return keyhold[key];
+    }
+
+    wchar _mcistr[300];
+    void loadSound(const uint &index, wstring sound) {
+        swprintf(_mcistr, L"open mpegvideo!\"%ls\" alias S%d", sound, index);
+        if(mciSendStringW(_mcistr, NULL, 0, NULL)) {
+            swprintf(_mcistr, L"loadSound error:%ls", sound);
+            WARNING_MSG(_mcistr);
+        }
+    }
+    void playSound(const uint &index, const bool &repeat) {
+        swprintf(_mcistr, L"play S%d from 0%ls", index, repeat ? L" repeat" : L"");
+        if(mciSendStringW(_mcistr, NULL, 0, NULL)) {
+            swprintf(_mcistr, L"playSound error:%d", index);
+            WARNING_MSG(_mcistr);
+        }
+    }
+    void stopSound(const uint &index) {
+        swprintf(_mcistr, L"stop S%d", index);
+        if(mciSendStringW(_mcistr, NULL, 0, NULL)) {
+            swprintf(_mcistr, L"stopSound error:%d", index);
+            WARNING_MSG(_mcistr);
+        }
+    }
+    void setVolume(const uint &index, const uint &volume) {
+        if(volume > 1000 || volume < 0)
+            return;
+        swprintf(_mcistr, L"setaudio S%d volume to %d", index, volume);
+        if(mciSendStringW(_mcistr, NULL, 0, NULL)) {
+            swprintf(_mcistr, L"setVolume error:%d->%d", index, volume);
+            WARNING_MSG(_mcistr);
+        }
     }
 
     void beginPaint() {
@@ -211,13 +234,12 @@ namespace FROSTYLIB {
     void endPaint() {
         ASSERT_PAINT;
         InvalidateRect(g_hWnd, 0, false);
-        UpdateWindow(g_hWnd);
     }
 
     void setPenColor(const COLOR &color) {
         g_pen->SetColor(color);
     }
-    void setPenWidth(cREAL &w) {
+    void setPenWidth(const REAL &w) {
         g_pen->SetWidth(w);
     }
 
@@ -225,11 +247,11 @@ namespace FROSTYLIB {
         g_brush->SetColor(color);
     }
 
-    void setTextFont(WString fontname) {
+    void setTextFont(wstring fontname) {
         g_fontfamily.reset(new Gdiplus::FontFamily(fontname));
         g_font.reset(new Gdiplus::Font(g_fontfamily.get(), g_fontsize, g_fontstyle, g_fontunit));
     }
-    void setTextSize(cREAL &s) {
+    void setTextSize(const REAL &s) {
         g_font.reset(new Gdiplus::Font(g_fontfamily.get(), g_fontsize = s, g_fontstyle, g_fontunit));
     }
     void setTextStyle(const Gdiplus::FontStyle &style) {
@@ -245,142 +267,95 @@ namespace FROSTYLIB {
         g_stringformat->SetLineAlignment(align);
     }
 
-    void line(cREAL &x1, cREAL &y1, cREAL &x2, cREAL &y2, const Gdiplus::Pen *_pen) {
+    void line(const REAL &x1, const REAL &y1, const REAL &x2, const REAL &y2, const Gdiplus::Pen *_pen) {
         ASSERT_PAINT;
         g_graphics->DrawLine(_pen ? _pen : g_pen, x1, y1, x2, y2);
     }
-    void rectangle(cREAL &x, cREAL &y, cREAL &w, cREAL &h, const Gdiplus::Brush *_brush) {
+    void rectangle(const REAL &x, const REAL &y, const REAL &w, const REAL &h, const Gdiplus::Brush *_brush) {
         ASSERT_PAINT;
         g_graphics->FillRectangle(_brush ? _brush : g_brush, x, y, w, h);
     }
 
-    void paintText(WString str, cREAL &x, cREAL &y, const Gdiplus::Font *_font, const Gdiplus::StringFormat *_format, const Gdiplus::Brush *_brush) {
+    void paintText(wstring str, const REAL &x, const REAL &y, const Gdiplus::Font *_font, const Gdiplus::StringFormat *_format, const Gdiplus::Brush *_brush) {
         ASSERT_PAINT;
         g_graphics->DrawString(str, -1, _font, {x, y}, _format, _brush);
     }
-    void paintText(WString str, cREAL &x, cREAL &y, const Gdiplus::Font *_font, const Gdiplus::Brush *_brush) {
+    void paintText(wstring str, const REAL &x, const REAL &y, const Gdiplus::Font *_font, const Gdiplus::Brush *_brush) {
         paintText(str, x, y, _font, g_stringformat, _brush);
     }
-    void paintText(WString str, cREAL &x, cREAL &y, const Gdiplus::Font *_font) {
+    void paintText(wstring str, const REAL &x, const REAL &y, const Gdiplus::Font *_font) {
         paintText(str, x, y, _font, g_stringformat, g_textbrush);
     }
-    void paintText(WString str, cREAL &x, cREAL &y, const Gdiplus::Brush *_brush) {
+    void paintText(wstring str, const REAL &x, const REAL &y, const Gdiplus::Brush *_brush) {
         paintText(str, x, y, g_font.get(), g_stringformat, _brush);
     }
-    void paintText(WString str, cREAL &x, cREAL &y) {
+    void paintText(wstring str, const REAL &x, const REAL &y) {
         paintText(str, x, y, g_font.get(), g_stringformat, g_textbrush);
     }
 
 #pragma region Img
     Gdiplus::PointF points[3];
     unique_ptr<Gdiplus::TextureBrush> texbrush;
-    Img::Img(filePath filename)
+    Img::Img(wstring filename)
       : Gdiplus::Image(filename) {
         if(this->GetLastStatus() != Gdiplus::Ok)
             throw ImageLoadException();
-        pw = GetWidth();
-        ph = GetHeight();
+        _pw = GetWidth();
+        _ph = GetHeight();
     }
-    Img *Img::FromFile(filePath filename) {
+    Img *Img::FromFile(wstring filename) {
         try {
             return new Img(filename);
         }
         catch(ImageLoadException) {
-            wprintf(L"ImageLoadError:%ls\n", filename);
+            static wchar _IMGERRORSTR[300];
+            swprintf(_IMGERRORSTR, 300, L"图片加载错误:%ls", filename);
+            WARNING_MSG(_IMGERRORSTR);
             return nullptr;
         }
     }
     uint Img::getw() const {
-        return pw;
+        return _pw;
     }
     uint Img::geth() const {
-        return ph;
+        return _ph;
     }
-    void Img::draw(cREAL &x, cREAL &y) {
+    void Img::draw(const REAL &x, const REAL &y) {
         ASSERT_PAINT;
         g_graphics->DrawImage(this, x, y);
     }
-    void Img::drawC(cREAL &x, cREAL &y) {
-        draw(x - (pw >> 1), y - (ph >> 1));
+    void Img::drawC(const REAL &x, const REAL &y) {
+        draw(x - (_pw >> 1), y - (_ph >> 1));
     }
-    void Img::drawFlip(cREAL &x, cREAL &y, cbool &flip) {
+    void Img::drawFlip(const REAL &x, const REAL &y, const bool &flip) {
         if(!flip)
             return draw(x, y);
         ASSERT_PAINT;
-        points[0] = {x + pw, y};
+        points[0] = {x + _pw, y};
         points[1] = {x, y};
-        points[2] = {x + pw, y + ph};
+        points[2] = {x + _pw, y + _ph};
         g_graphics->DrawImage(this, points, 3);
     }
-    void Img::drawFlipC(cREAL &x, cREAL &y, cbool &flip) {
-        drawFlip(x - (pw >> 1), y - (ph >> 1), flip);
+    void Img::drawFlipC(const REAL &x, const REAL &y, const bool &flip) {
+        drawFlip(x - (_pw >> 1), y - (_ph >> 1), flip);
     }
-    void Img::FillRect(cREAL &x, cREAL &y, cREAL &w, cREAL &h, cREAL &sx, cREAL &sy) {
+    void Img::FillRect(const REAL &x, const REAL &y, const REAL &w, const REAL &h, const REAL &sx, const REAL &sy) {
         ASSERT_PAINT;
         texbrush = make_unique<Gdiplus::TextureBrush>(this);
         texbrush->TranslateTransform(sx, sy);
         g_graphics->FillRectangle(texbrush.get(), x, y, w, h);
         g_graphics->GetLastStatus() == Gdiplus::Ok;
     }
-    void Img::FillRectC(cREAL &x, cREAL &y, cREAL &w, cREAL &h, cREAL &sx, cREAL &sy) {
-        FillRect(x - (pw >> 1), y - (ph >> 1), w, h, sx, sy);
-    }
-#pragma endregion
-
-#pragma region ImgList
-    ImgList::ImgList()
-      : count(0), interval(0), now(0), imgindex(0), imglist(nullptr) {}
-    ImgList::ImgList(cuint &duration, const filePathList &pathlist)
-      : count(pathlist.size()), interval(duration), imgindex(0), now(0) {
-        imglist = new Img *[count];
-        for(int i = 0; auto path: pathlist)
-            imglist[i++] = Img::FromFile(path);
-    }
-    void ImgList::load(cuint &duration, const filePathList &pathlist) {
-        if(count) {
-            for(int i = 0; i < count; ++i)
-                delete imglist[i];
-            delete[] imglist;
-        }
-        count    = pathlist.size();
-        interval = duration;
-        imgindex = now = 0;
-    }
-    uint ImgList::getTotalTime() const {
-        return count * interval;
-    }
-    void ImgList::restart() {
-        imgindex = now = 0;
-    }
-    void ImgList::next() {
-        if(++now == interval) {
-            if(++imgindex == count)
-                imgindex = 0;
-            now = 0;
-        }
-    }
-    void ImgList::draw(cREAL &x, cREAL &y) {
-        imglist[imgindex]->draw(x, y);
-        next();
-    }
-    void ImgList::drawC(cREAL &x, cREAL &y) {
-        imglist[imgindex]->drawC(x, y);
-        next();
-    }
-    void ImgList::drawFlip(cREAL &x, cREAL &y, cbool &flip) {
-        imglist[imgindex]->drawFlip(x, y);
-        next();
-    }
-    void ImgList::drawFlipC(cREAL &x, cREAL &y, cbool &flip) {
-        imglist[imgindex]->drawFlipC(x, y);
-        next();
+    void Img::FillRectC(const REAL &x, const REAL &y, const REAL &w, const REAL &h, const REAL &sx, const REAL &sy) {
+        FillRect(x - (_pw >> 1), y - (_ph >> 1), w, h, sx, sy);
     }
 #pragma endregion
 
 #pragma region StopWatch
+    LARGE_INTEGER StopWatch::Fre;
     StopWatch::StopWatch() {
-        if(QueryPerformanceFrequency(&Fre) == 0)
-            throw L"按官方文档来说XP及以后的系统都是支持的...";
+        if(!Fre.QuadPart)
+            ASSERT(QueryPerformanceFrequency(&Fre), L"按官方文档来说XP及以后的系统都是支持的...");
         st.QuadPart = ed.QuadPart = 0;
     }
     void StopWatch::start() {
