@@ -11,7 +11,7 @@ AlignConsecutiveDeclarations: None
 AlignConsecutiveMacros: None
 AlignEscapedNewlines: Left
 AlignOperands:   Align
-AlignTrailingComments: true
+AlignTrailingComments: false
 
 # TBD
 AllowAllArgumentsOnNextLine: true
