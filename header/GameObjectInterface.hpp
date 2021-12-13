@@ -13,13 +13,12 @@ namespace ObjectInterface {
     //碰撞箱接口
     template<typename T>
     class IBox: virtual public ObjectBase::object {
-      protected:
+      public:
         //碰撞箱宽/高度
         static const uint _boxwidth, _boxheight;
         //碰撞箱宽/高度的一半
         static const uint _halfboxwidth, _halfboxheight;
 
-      public:
         IBox() {}
 
         //碰撞检测
@@ -53,16 +52,16 @@ namespace ObjectInterface {
     //动画接口
     template<typename T>
     class IAnima: virtual public ObjectBase::object {
-      protected:
-        //待机,转身,左/右转图片序列
-        static FROSTYLIB::Img **_Idle, **_Turn, **_LeftRight;
-        //图片数量
+      public:
+        //待机,转身,左/右转图片数量
         static constexpr byte _Icount = 4, _Tcount = 3, _LRcount = 4;
         //每张图片持续帧数
         static constexpr byte _Itime = 8, _Ttime = 6, _LRtime = 8;
 
-
       protected:
+        //图片序列
+        static FROSTYLIB::Img *_Idle[_Icount], *_Turn[_Tcount], *_LeftRight[_LRcount];
+
         //当前图片序号,时间计数
         byte _count, _time;
 
