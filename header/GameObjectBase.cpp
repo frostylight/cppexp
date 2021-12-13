@@ -4,6 +4,7 @@
 namespace ObjectBase {
     object::object(const REAL &x, const REAL &y)
       : _x(x), _y(y) {}
+    object::object() {}
 
     item::item(const REAL &dx, const REAL &dy)
       : _dx(dx), _dy(dy) {}

@@ -12,6 +12,7 @@ namespace ObjectBase {
 
       public:
         object(const REAL &x, const REAL &y);
+        object();
 
         //数据更新
         virtual void update() = 0;
