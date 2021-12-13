@@ -1,0 +1,23 @@
+#pragma once
+
+#include "stdpre.hpp"
+
+namespace Setting {
+    constexpr char title[] = "Touhou Project Imperishable Night. (Fake) ver 0.9.5";
+
+    constexpr uint WinWidth = 640, WinHeight = 480;
+    constexpr uint halfWinWidth  = WinWidth >> 1,
+                   halfWinHeight = WinHeight >> 1;
+
+    constexpr uint MapWidth = 400, MapHeight = WinHeight;
+    constexpr uint halfMapWidth  = MapWidth >> 1,
+                   halfMapHeight = MapHeight >> 1;
+
+    constexpr uint SpwanX = halfWinWidth,
+                   SpwanY = MapHeight * 0.75;
+
+    constexpr REAL MapSpeed = 0.3;
+
+    constexpr REAL ReimuSpeed = 4.5;
+
+} // namespace Setting
