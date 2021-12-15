@@ -11,14 +11,14 @@ remake: clean compile
 run: compile
 	core
 
-%.o: %.cpp %.hpp
-	g++ $(CPPStandard:%=-std=%) -c $< -o $@
+%.o: %.cpp %.hpp header/stdpre.hpp
+	g++ $(CPPStandard:%=-std=%) -Wall -c $< -o $@
 
-core.o: core.cpp
-	g++ $(CPPStandard:%=-std=%) -c $< -o $@
+core.o: core.cpp header/stdpre.hpp
+	g++ $(CPPStandard:%=-std=%) -Wall -c $< -o $@
 
 core.exe: $(HEADER) core.o
-	g++ $(CPPStandard:%=-std=%) $^ $(LIB:%=-l%) -o core.exe
+	g++ $(CPPStandard:%=-std=%) -Wall $^ $(LIB:%=-l%) -o core.exe
 
 clean:
 	del *.o
