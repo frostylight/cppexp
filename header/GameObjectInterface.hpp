@@ -13,13 +13,17 @@ namespace ObjectInterface {
     //碰撞箱接口
     template<typename T>
     class IBox: virtual public ObjectBase::object {
+      protected:
+        IBox()
+          : ObjectBase::object(0, 0) {}
+        //实际object构造由最后派生类决定,此处占位
+
       public:
         //碰撞箱宽/高度
         static const uint _boxwidth, _boxheight;
         //碰撞箱宽/高度的一半
         static const uint _halfboxwidth, _halfboxheight;
-
-        IBox() {}
+        //此类静态成员应在GameSetting.cpp中定义并赋值
 
         //碰撞检测
         template<typename U>
@@ -39,16 +43,24 @@ namespace ObjectInterface {
       protected:
         //图片
         static FROSTYLIB::Img *_img;
+        //此类静态成员应在GameResource.cpp中赋值
+
+        IImg()
+          : ObjectBase::object(0, 0) {}
+        //实际object构造由最后派生类决定,此处占位
 
       public:
-        IImg() {}
-
         //绘图
         virtual void draw() override {
             _img->drawC(_x, _y);
         }
     };
+    template<typename T>
+    FROSTYLIB::Img *IImg<T>::_img(nullptr);
 
+    enum { IDLE  = 0b00,
+           LEFT  = 0b10,
+           RIGHT = 0b01 };
     //动画接口
     template<typename T>
     class IAnima: virtual public ObjectBase::object {
@@ -61,19 +73,19 @@ namespace ObjectInterface {
       protected:
         //图片序列
         static FROSTYLIB::Img *_Idle[_Icount], *_Turn[_Tcount], *_LeftRight[_LRcount];
+        //此类静态成员应在GameResource.cpp中赋值
 
         //当前图片序号,时间计数
         byte _count, _time;
 
         //当前状态
         byte _state, _last;
-        enum { LEFT  = 0b10,
-               RIGHT = 0b01 };
+
+        IAnima()
+          : ObjectBase::object(0, 0), _count(0), _time(0), _state(0), _last(0) {}
+        //实际object构造由最后派生类决定,此处占位
 
       public:
-        IAnima()
-          : _state(0), _last(0), _count(0), _time(0) {}
-
         //总播放时间
         static const uint _alltime = _Icount * _Itime + _Tcount * _Ttime + _LRcount * _LRtime;
 
@@ -122,5 +134,11 @@ namespace ObjectInterface {
             }
         }
     };
+    template<typename T>
+    FROSTYLIB::Img *IAnima<T>::_Idle[IAnima<T>::_Icount]{nullptr};
+    template<typename T>
+    FROSTYLIB::Img *IAnima<T>::_Turn[IAnima<T>::_Tcount]{nullptr};
+    template<typename T>
+    FROSTYLIB::Img *IAnima<T>::_LeftRight[IAnima<T>::_LRcount]{nullptr};
 
 } // namespace ObjectInterface

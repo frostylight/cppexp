@@ -10,12 +10,17 @@ using namespace Setting;
 Reimu reimu(3);
 
 TIMER(GameRun) {
+    //数据更新
+    Game::BGupdate();
     reimu.update();
+
+    //图像绘制
     beginPaint();
-    rectangle(0, 0, MapWidth, MapHeight);
+    Game::BGdraw();
     reimu.draw();
     endPaint();
 }
+
 
 void Setup() {
     initWindow(title, DEFAULT, DEFAULT, WinWidth, WinHeight);
