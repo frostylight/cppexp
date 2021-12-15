@@ -16,4 +16,12 @@ namespace ObjectCore {
         void update() override;
     };
 
+    class EnemyE final: public ObjectBase::enemy,
+                        public ObjectInterface::IBox<EnemyE>,
+                        public ObjectInterface::IImg<EnemyE> {
+        REAL _sx, _sy;
+
+      public:
+    };
+
 } // namespace ObjectCore

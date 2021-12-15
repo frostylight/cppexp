@@ -31,7 +31,7 @@ namespace ObjectCore {
 
     void Reimu::update() {
         _last  = _state;
-        _state = 0;
+        _state = IDLE;
         if(ishold(VK_UP) ^ ishold(VK_DOWN)) {
             if(ishold(VK_UP))
                 _y = max(IBox<Reimu>::_halfboxheight, _y - _speed);
