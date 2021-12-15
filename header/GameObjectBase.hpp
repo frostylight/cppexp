@@ -10,10 +10,9 @@ namespace ObjectBase {
         //物体中心坐标
         REAL _x, _y;
 
-      public:
         object(const REAL &x, const REAL &y);
-        object();
 
+      public:
         //数据更新
         virtual void update() = 0;
         //绘图
@@ -26,19 +25,18 @@ namespace ObjectBase {
         //生命值
         int _health;
 
-      public:
         chara(const int &health);
     };
 
     //玩家
     class player: public chara {
-      public:
+      protected:
         using chara::chara;
     };
 
     //敌人
     class enemy: public chara {
-      public:
+      protected:
         using chara::chara;
     };
 
@@ -48,9 +46,9 @@ namespace ObjectBase {
         //每帧位移
         REAL _dx, _dy;
 
-      public:
         item(const REAL &dx, const REAL &dy);
 
+      public:
         virtual void update() override;
     };
 
@@ -60,19 +58,18 @@ namespace ObjectBase {
         //命中伤害
         uint _damage;
 
-      public:
         bullet(const REAL &dx, const REAL &dy, const uint &damage);
     };
 
     //玩家子弹
     class playerbullet: public bullet {
-      public:
+      protected:
         using bullet::bullet;
     };
 
     //敌人子弹
     class enemybullet: public bullet {
-      public:
+      protected:
         using bullet::bullet;
     };
 

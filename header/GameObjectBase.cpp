@@ -4,10 +4,11 @@
 namespace ObjectBase {
     object::object(const REAL &x, const REAL &y)
       : _x(x), _y(y) {}
-    object::object() {}
+    // object::object() {}
 
     item::item(const REAL &dx, const REAL &dy)
-      : _dx(dx), _dy(dy) {}
+      : object(0, 0), _dx(dx), _dy(dy) {}
+    //实际object构造由最后派生类决定,此处占位
 
     void item::update() {
         _x += _dx;
