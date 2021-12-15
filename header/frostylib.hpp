@@ -14,7 +14,7 @@
 
 #include "stdpre.hpp"
 
-#define UNUSED_TIMER_PARAM HWND UNUSED0, UINT UNUSED1, UINT_PTR UNUSED2, DWORD UNUSED3
+#define UNUSED_TIMER_PARAM [[maybe_unused]] HWND UNUSED0, [[maybe_unused]] UINT UNUSED1, [[maybe_unused]] UINT_PTR UNUSED2, [[maybe_unused]] DWORD UNUSED3
 #define TIMER(x) void CALLBACK x(UNUSED_TIMER_PARAM)
 #define CALLTIMER(x) x(0, 0, 0, 0)
 
@@ -67,6 +67,9 @@ namespace FROSTYLIB {
     void setTextFont(wstring fontname);
     void setTextSize(const REAL &s);
     void setTextStyle(const Gdiplus::FontStyle &style);
+    [[nodiscard]] Gdiplus::Font *getFont(const Gdiplus::FontStyle &style, const REAL &s);
+    [[nodiscard]] Gdiplus::Font *getFont(const REAL &s);
+    [[nodiscard]] Gdiplus::Font *getFont(const Gdiplus::FontStyle &style);
     void setTextColor(const COLOR &color);
     void setTextAlign(const Gdiplus::StringAlignment &align);
     void setTextLineAlign(const Gdiplus::StringAlignment &align);
@@ -94,7 +97,7 @@ namespace FROSTYLIB {
         Img(wstring filename);
 
       public:
-        static Img *FromFile(wstring filename);
+        [[nodiscard]] static Img *FromFile(wstring filename);
 
         inline uint getw() const;
         inline uint geth() const;

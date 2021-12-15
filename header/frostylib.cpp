@@ -33,7 +33,6 @@ unique_ptr<Gdiplus::FontFamily> g_fontfamily;
 unique_ptr<Gdiplus::Font> g_font;
 REAL g_fontsize                = 15;
 Gdiplus::FontStyle g_fontstyle = Gdiplus::FontStyleRegular;
-Gdiplus::Unit g_fontunit       = Gdiplus::UnitPixel;
 
 //计时器
 bool timerid[0xff];
@@ -61,7 +60,7 @@ void ASSERT(const bool &state, wstring errstr) {
 
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow) {
+int WINAPI WinMain(HINSTANCE hInstance, [[maybe_unused]] HINSTANCE hPrevInstance, [[maybe_unused]] PSTR szCmdLine, [[maybe_unused]] int iCmdShow) {
     MSG msg;
     WNDCLASSA wndclass;
 
@@ -96,7 +95,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
             g_brush        = new Gdiplus::SolidBrush(COLOR::Aqua);
             g_textbrush    = new Gdiplus::SolidBrush(COLOR::Black);
             g_fontfamily   = make_unique<Gdiplus::FontFamily>(L"Consolas");
-            g_font         = make_unique<Gdiplus::Font>(g_fontfamily.get(), g_fontsize, g_fontstyle, g_fontunit);
+            g_font         = make_unique<Gdiplus::Font>(g_fontfamily.get(), g_fontsize, g_fontstyle, Gdiplus::UnitPixel);
             g_stringformat = new Gdiplus::StringFormat(Gdiplus::StringFormat::GenericDefault());
             g_stringformat->SetAlignment(Gdiplus::StringAlignmentCenter);
 
@@ -249,13 +248,22 @@ namespace FROSTYLIB {
 
     void setTextFont(wstring fontname) {
         g_fontfamily.reset(new Gdiplus::FontFamily(fontname));
-        g_font.reset(new Gdiplus::Font(g_fontfamily.get(), g_fontsize, g_fontstyle, g_fontunit));
+        g_font.reset(new Gdiplus::Font(g_fontfamily.get(), g_fontsize, g_fontstyle, Gdiplus::UnitPixel));
     }
     void setTextSize(const REAL &s) {
-        g_font.reset(new Gdiplus::Font(g_fontfamily.get(), g_fontsize = s, g_fontstyle, g_fontunit));
+        g_font.reset(new Gdiplus::Font(g_fontfamily.get(), g_fontsize = s, g_fontstyle, Gdiplus::UnitPixel));
     }
     void setTextStyle(const Gdiplus::FontStyle &style) {
-        g_font.reset(new Gdiplus::Font(g_fontfamily.get(), g_fontsize, g_fontstyle = style, g_fontunit));
+        g_font.reset(new Gdiplus::Font(g_fontfamily.get(), g_fontsize, g_fontstyle = style, Gdiplus::UnitPixel));
+    }
+    Gdiplus::Font *getFont(const Gdiplus::FontStyle &style, const REAL &s) {
+        return new Gdiplus::Font(g_fontfamily.get(), s, style, Gdiplus::UnitPixel);
+    }
+    Gdiplus::Font *getFont(const REAL &s) {
+        return new Gdiplus::Font(g_fontfamily.get(), s, g_fontstyle, Gdiplus::UnitPixel);
+    }
+    Gdiplus::Font *getFont(const Gdiplus::FontStyle &style) {
+        return new Gdiplus::Font(g_fontfamily.get(), g_fontsize, style, Gdiplus::UnitPixel);
     }
     void setTextColor(const COLOR &color) {
         g_textbrush->SetColor(color);
@@ -293,7 +301,7 @@ namespace FROSTYLIB {
         paintText(str, x, y, g_font.get(), g_stringformat, g_textbrush);
     }
 
-#pragma region Img
+
     Gdiplus::PointF points[3];
     unique_ptr<Gdiplus::TextureBrush> texbrush;
     Img::Img(wstring filename)
@@ -344,14 +352,12 @@ namespace FROSTYLIB {
         texbrush = make_unique<Gdiplus::TextureBrush>(this);
         texbrush->TranslateTransform(sx, sy);
         g_graphics->FillRectangle(texbrush.get(), x, y, w, h);
-        g_graphics->GetLastStatus() == Gdiplus::Ok;
     }
     void Img::FillRectC(const REAL &x, const REAL &y, const REAL &w, const REAL &h, const REAL &sx, const REAL &sy) {
         FillRect(x - (_pw >> 1), y - (_ph >> 1), w, h, sx, sy);
     }
-#pragma endregion
 
-#pragma region StopWatch
+
     LARGE_INTEGER StopWatch::Fre;
     StopWatch::StopWatch() {
         if(!Fre.QuadPart)
@@ -380,6 +386,5 @@ namespace FROSTYLIB {
             return 1.0 * (temp.QuadPart - st.QuadPart) / Fre.QuadPart;
         }
     }
-#pragma endregion
 
 } // namespace FROSTYLIB
