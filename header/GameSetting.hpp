@@ -13,11 +13,17 @@ namespace Setting {
     constexpr uint halfMapWidth  = MapWidth >> 1,
                    halfMapHeight = MapHeight >> 1;
 
-    constexpr uint SpwanX = halfWinWidth,
+    constexpr uint SpwanX = halfMapWidth,
                    SpwanY = MapHeight * 0.75;
 
     constexpr REAL MapSpeed = 0.3;
 
     constexpr REAL ReimuSpeed = 4.5;
+
+    namespace UI {
+        constexpr uint SymbolX = halfWinWidth + halfMapWidth,
+                       SymbolY = 340;
+
+    } // namespace UI
 
 } // namespace Setting

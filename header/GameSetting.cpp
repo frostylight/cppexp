@@ -14,5 +14,4 @@ namespace ObjectInterface {
     template<>
     constexpr uint IBox<Reimu>::_halfboxheight = IBox<Reimu>::_boxheight >> 1;
 
-
 } // namespace ObjectInterface
