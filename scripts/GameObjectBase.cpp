@@ -21,4 +21,7 @@ namespace ObjectBase {
     chara::chara(const int &health)
       : _health(health) {}
 
+    player::player(const int &health, const REAL &speed)
+      : chara(health), _speed(speed) {}
+
 } // namespace ObjectBase

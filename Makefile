@@ -1,27 +1,24 @@
-CPPStandard = c++20
-HEADER = $(subst .cpp,.o,$(wildcard header/*.cpp))
+Compiler = g++
+CompileParam = -std=c++20 -Wall
 LIB = gdi32 gdiplus winmm
 
-all: compile run
+TopDir = $(CURDIR)
+CacheDir = $(TopDir)/cache
+Scripts = scripts
+src=$(subst scripts,$(CacheDir),$(subst .cpp,.o,$(wildcard scripts/*.cpp)))
 
-compile: core.exe
+export CacheDir Compiler CompileParam
 
-remake: clean compile
+all : checkcache core.exe
 
-run: compile
-	core
+checkcache :
+	@if not exist $(CacheDir) mkdir $(CacheDir)
 
-%.o: %.cpp %.hpp header/stdpre.hpp
-	g++ $(CPPStandard:%=-std=%) -Wall -c $< -o $@
+compile:
+	@mingw32-make --no-print-directory -C scripts
 
-core.o: core.cpp header/stdpre.hpp
-	g++ $(CPPStandard:%=-std=%) -Wall -c $< -o $@
+core.exe : compile
+	$(Compiler) $(CompileParam) $(CacheDir)/*.o $(LIB:%=-l%) -o core.exe
 
-core.exe: $(HEADER) core.o
-	g++ $(CPPStandard:%=-std=%) -Wall $^ $(LIB:%=-l%) -o core.exe
 
-clean:
-	del *.o
-	del header\*.o
-	del core.exe
 

@@ -176,7 +176,7 @@ SpacesInSquareBrackets: false
 
 Standard:        Latest
 StatementAttributeLikeMacros: []
-StatementMacros: []
+StatementMacros: [definebox]
 TabWidth:        4
 UseCRLF:         false
 UseTab:          Never

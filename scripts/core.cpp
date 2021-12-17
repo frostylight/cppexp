@@ -1,31 +1,36 @@
 #include <cstdio>
+#include <list>
 
-#include "header/GameObjectCore.hpp"
-#include "header/GameResource.hpp"
+#include "GameObjectCore.hpp"
+#include "GameResource.hpp"
 
 using namespace FROSTYLIB;
+using namespace ObjectBase;
 using namespace ObjectCore;
 using namespace Setting;
 
-Reimu reimu(3);
+player *reimu = new Reimu(3);
+std::list<playerbullet *> pb;
+std::list<enemy *> en;
+std::list<enemybullet *> eb;
 
 TIMER(GameRun) {
     //数据更新
     Game::BGupdate();
-    reimu.update();
+    reimu->update();
 
     //图像绘制
     beginPaint();
     Game::BGdraw();
-    reimu.draw();
+    reimu->draw();
     endPaint();
 }
-
 
 void Setup() {
     initWindow(title, DEFAULT, DEFAULT, WinWidth, WinHeight);
     initConsole();
     loadResource();
     setBrushColor(COLOR::White);
+    Game::playBGM(BGM::STG1);
     startTimer(0, 15, GameRun);
 }

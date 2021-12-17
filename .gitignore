@@ -33,4 +33,6 @@
 
 .vscode/
 imgres/
-header/TBD/
+TBD/
+cache/
+dep/

@@ -27,7 +27,7 @@ inline U min(const U &x, const T &y) {
 
 namespace ObjectCore {
     Reimu::Reimu(const int &health)
-      : object(SpwanX, SpwanY), player(health), _speed(ReimuSpeed) {}
+      : object(SpwanX, SpwanY), player(health, ReimuSpeed) {}
 
     void Reimu::update() {
         _last  = _state;

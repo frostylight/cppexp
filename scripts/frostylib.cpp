@@ -34,6 +34,15 @@ unique_ptr<Gdiplus::Font> g_font;
 REAL g_fontsize                = 15;
 Gdiplus::FontStyle g_fontstyle = Gdiplus::FontStyleRegular;
 
+Gdiplus::ColorMatrix _halfAlphaMatrix{
+  {{1, 0, 0, 0, 0},
+   {0, 1, 0, 0, 0},
+   {0, 0, 1, 0, 0},
+   {0, 0, 0, 0.5, 0},
+   {0, 0, 0, 0, 1}}
+};
+Gdiplus::ImageAttributes *_halfAlpha;
+
 //计时器
 bool timerid[0xff];
 
@@ -98,6 +107,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
             g_font         = make_unique<Gdiplus::Font>(g_fontfamily.get(), g_fontsize, g_fontstyle, Gdiplus::UnitPixel);
             g_stringformat = new Gdiplus::StringFormat(Gdiplus::StringFormat::GenericDefault());
             g_stringformat->SetAlignment(Gdiplus::StringAlignmentCenter);
+
+            _halfAlpha = new Gdiplus::ImageAttributes();
+            _halfAlpha->SetColorMatrix(&_halfAlphaMatrix);
 
             memset(timerid, 0, sizeof timerid);
             break;
@@ -335,6 +347,13 @@ namespace FROSTYLIB {
     void Img::drawC(const REAL &x, const REAL &y) {
         draw(x - (_pw >> 1), y - (_ph >> 1));
     }
+    void Img::drawH(const REAL &x, const REAL &y) {
+        ASSERT_PAINT;
+        g_graphics->DrawImage(this, (Gdiplus::RectF){x, y, (REAL)_pw, (REAL)_ph}, 0, 0, _pw, _ph, Gdiplus::UnitPixel, _halfAlpha);
+    }
+    void Img::drawHC(const REAL &x, const REAL &y) {
+        drawH(x - (_pw >> 1), y - (_ph >> 1));
+    }
     void Img::drawFlip(const REAL &x, const REAL &y, const bool &flip) {
         if(!flip)
             return draw(x, y);
@@ -344,8 +363,20 @@ namespace FROSTYLIB {
         points[2] = {x + _pw, y + _ph};
         g_graphics->DrawImage(this, points, 3);
     }
+    void Img::drawFlipH(const REAL &x, const REAL &y, const bool &flip) {
+        if(!flip)
+            return drawH(x, y);
+        ASSERT_PAINT;
+        points[0] = {x + _pw, y};
+        points[1] = {x, y};
+        points[2] = {x + _pw, y + _ph};
+        g_graphics->DrawImage(this, points, 3, 0, 0, _pw, _ph, Gdiplus::UnitPixel, _halfAlpha);
+    }
     void Img::drawFlipC(const REAL &x, const REAL &y, const bool &flip) {
         drawFlip(x - (_pw >> 1), y - (_ph >> 1), flip);
+    }
+    void Img::drawFlipHC(const REAL &x, const REAL &y, const bool &flip) {
+        drawFlipH(x - (_pw >> 1), y - (_ph >> 1), flip);
     }
     void Img::FillRect(const REAL &x, const REAL &y, const REAL &w, const REAL &h, const REAL &sx, const REAL &sy) {
         ASSERT_PAINT;

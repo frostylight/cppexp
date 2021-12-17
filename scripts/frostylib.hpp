@@ -42,7 +42,7 @@ namespace FROSTYLIB {
     void initWindow(const char *title, int left, int top, int width, int height);
     void initConsole(void);
 
-    //设置一个编号为timerID的计时器，每过timeinterval毫秒调用一次f
+    //设置一个编号为timerID的计时器,每过timeinterval毫秒调用一次f
     void startTimer(const byte &timerID, const uint &timeinterval, TIMERFUNC f);
 
     //取消编号为timerID的定时器
@@ -77,7 +77,7 @@ namespace FROSTYLIB {
     //绘制一条穿过(x1, y1), (x2, y2)的直线
     void line(const REAL &x1, const REAL &y1, const REAL &x2, const REAL &y2, const Gdiplus::Pen *_pen = nullptr);
 
-    //以(x, y)为左上角，w为宽、h为高填充矩形
+    //以(x, y)为左上角,w为宽、h为高填充矩形
     void rectangle(const REAL &x, const REAL &y, const REAL &w, const REAL &h, const Gdiplus::Brush *_brush = nullptr);
 
     void paintText(wstring str, const REAL &x, const REAL &y, const Gdiplus::Font *_font, const Gdiplus::StringFormat *_format, const Gdiplus::Brush *_brush);
@@ -102,17 +102,26 @@ namespace FROSTYLIB {
         inline uint getw() const;
         inline uint geth() const;
 
+
         //以(x, y)为左上角绘图
         void draw(const REAL &x, const REAL &y);
+        //以(x, y)为左上角绘图, 透明度50%
+        void drawH(const REAL &x, const REAL &y);
         //以(x, y)为中心绘图
         void drawC(const REAL &x, const REAL &y);
-        //以(x, y)为左上角绘图，flip决定是否水平翻转
+        //以(x, y)为中心绘图, 透明度50%
+        void drawHC(const REAL &x, const REAL &y);
+        //以(x, y)为左上角绘图,flip决定是否水平翻转
         void drawFlip(const REAL &x, const REAL &y, const bool &flip = true);
-        //以(x, y)为中心绘图，flip决定是否水平翻转
+        //以(x, y)为左上角绘图,透明度50%,flip决定是否水平翻转
+        void drawFlipH(const REAL &x, const REAL &y, const bool &flip = true);
+        //以(x, y)为中心绘图,flip决定是否水平翻转
         void drawFlipC(const REAL &x, const REAL &y, const bool &flip = true);
-        //以(x, y)为左上角，(sx, sy)为图片偏移量，平铺宽为w、高为h的矩形
+        //以(x, y)为中心绘图,透明度50%,flip决定是否水平翻转
+        void drawFlipHC(const REAL &x, const REAL &y, const bool &flip = true);
+        //以(x, y)为左上角,(sx, sy)为图片偏移量,平铺宽为w、高为h的矩形
         void FillRect(const REAL &x, const REAL &y, const REAL &w, const REAL &h, const REAL &sx = 0, const REAL &sy = 0);
-        //以(x, y)为中心，(sx, sy)为图片偏移量，平铺宽为w、高为h的矩形
+        //以(x, y)为中心,(sx, sy)为图片偏移量,平铺宽为w、高为h的矩形
         void FillRectC(const REAL &x, const REAL &y, const REAL &w, const REAL &h, const REAL &sx = 0, const REAL &sy = 0);
     };
 

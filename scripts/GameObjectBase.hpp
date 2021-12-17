@@ -31,7 +31,9 @@ namespace ObjectBase {
     //玩家
     class player: public chara {
       protected:
-        using chara::chara;
+        REAL _speed;
+
+        player(const int &health, const REAL &speed);
     };
 
     //敌人

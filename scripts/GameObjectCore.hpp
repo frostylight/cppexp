@@ -8,12 +8,16 @@ namespace ObjectCore {
     class Reimu final: public ObjectBase::player,
                        public ObjectInterface::IBox<Reimu>,
                        public ObjectInterface::IAnima<Reimu> {
-        REAL _speed;
-
       public:
         Reimu(const int &health);
 
         void update() override;
+    };
+
+    class SpellCard final: public ObjectBase::playerbullet,
+                           public ObjectInterface::IBox<SpellCard>,
+                           public ObjectInterface::IImg<SpellCard> {
+      public:
     };
 
     class EnemyE final: public ObjectBase::enemy,
@@ -21,6 +25,12 @@ namespace ObjectCore {
                         public ObjectInterface::IImg<EnemyE> {
         REAL _sx, _sy;
 
+      public:
+    };
+
+    class RoundBullet final: public ObjectBase::enemybullet,
+                             public ObjectInterface::IBox<RoundBullet>,
+                             public ObjectInterface::IImg<RoundBullet> {
       public:
     };
 
