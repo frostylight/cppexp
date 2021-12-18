@@ -50,6 +50,11 @@ const char g_libName[]   = "FROSTYLIB";
 const wchar g_libNameW[] = L"FROSTYLIB";
 
 void ERROR_MSG(wstring str) {
+    for(int i = 0; i < 0xff; ++i)
+        if(timerid[i]) {
+            KillTimer(g_hWnd, i);
+            timerid[i] = false;
+        }
     MessageBoxW(g_hWnd ? g_hWnd : nullptr, str, g_libNameW, MB_ICONERROR);
     exit(0);
 }

@@ -19,9 +19,9 @@ namespace ObjectBase {
 
     bullet::bullet(const REAL &dx, const REAL &dy, const uint &damage): item(dx, dy), _damage(damage) {}
 
-    chara::chara(const int &health): _health(health) {}
-
-    player::player(const int &health, const REAL &speed): object(0, 0), chara(health), _speed(speed) {}
+    chara::chara(const int &health): object(0, 0), _health(health) {}
     //实际object构造由最后派生类决定,此处占位
+
+    player::player(const int &health, const REAL &speed): chara(health), _speed(speed) {}
 
 } // namespace ObjectBase

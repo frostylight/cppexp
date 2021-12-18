@@ -69,6 +69,8 @@ void loadResource() {
     _resload = new wchar[10000];
     AnimaResManager<Reimu>::load();
     ImgResManager<SpellCard>::load();
+    ImgResManager<EnemyE>::load();
+    ImgResManager<RoundBullet>::load();
     delete[] _resload;
 
     Mapbg   = Img::FromFile(L"res/img/UI/Map/Background.png");

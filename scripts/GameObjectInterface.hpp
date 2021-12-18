@@ -32,10 +32,6 @@ namespace ObjectInterface {
         inline bool collide(const IBox<T> *const obj) const {
             return abs(_x - obj->_x) <= IBox<T>::_boxwidth && abs(_y - obj->_y) <= IBox<T>::_boxheight;
         }
-
-        bool inMap(const REAL &width, const REAL &height) const override {
-            return _halfboxwidth <= _x && _x + _halfboxwidth <= width && _halfboxheight <= _y && _y + _halfboxheight <= height;
-        }
     };
 
     template<typename T>
@@ -73,7 +69,10 @@ namespace ObjectInterface {
       public:
         //绘图
         virtual void draw() override {
-            _img->drawC(_x, _y);
+            if(!_img)
+                ERROR_MSG(L"Img Resource not load!");
+            else
+                _img->drawC(_x, _y);
         }
     };
     template<typename T>

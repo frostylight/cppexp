@@ -6,6 +6,7 @@ using namespace ObjectInterface;
 using namespace ObjectBase;
 using namespace Setting;
 
+using std::max;
 template<std::integral T, std::floating_point U>
 inline U max(const T &x, const U &y) {
     return x > y ? x : y;
@@ -14,6 +15,7 @@ template<std::integral T, std::floating_point U>
 inline U max(const U &x, const T &y) {
     return x > y ? x : y;
 }
+using std::min;
 template<std::integral T, std::floating_point U>
 inline U min(const T &x, const U &y) {
     return x < y ? x : y;
@@ -22,6 +24,9 @@ template<std::integral T, std::floating_point U>
 inline U min(const U &x, const T &y) {
     return x < y ? x : y;
 }
+
+//-距离计算临时变量
+REAL dx, dy, dis;
 
 namespace ObjectCore {
     //-Reimu
@@ -51,6 +56,32 @@ namespace ObjectCore {
         IAnima<Reimu>::update();
     }
 
+    //-EnemyE
+    EnemyE::EnemyE(const REAL &x, const REAL &y, const REAL &sx, const REAL &sy, const REAL &lx, const REAL &ly, const int &health)
+      : object(x, y), enemy(health), _sx(sx), _sy(sy), _lx(lx), _ly(ly), _arr(false) {}
+    void EnemyE::update() {
+        if(!_arr) {
+            dx  = _sx - _x;
+            dy  = _sy - _y;
+            dis = sqrt(dx * dx + dy * dy);
+            _x += dx * (0.005 + EnemyESpeed / dis);
+            _y += dy * (0.005 + EnemyESpeed / dis);
+            if(abs(_x - _sx) <= IBox<EnemyE>::_halfboxwidth && abs(_y - _sy) <= IBox<EnemyE>::_halfboxheight)
+                _arr = true;
+        }
+        else {
+            dx  = _lx - _x;
+            dy  = _ly - _y;
+            dis = sqrt(dx * dx + dy * dy);
+            _x += dx * (0.0025 + EnemyESpeed / dis);
+            _y += dy * (0.0025 + EnemyESpeed / dis);
+        }
+        Ishot<EnemyE>::update();
+    }
+    bool EnemyE::inMap(const REAL &width, const REAL &height) const {
+        return _arr ? object::inMap(width, height) : true;
+    }
+
     //-SpellCard
     SpellCard::SpellCard(const REAL &x, const REAL &y, const REAL &speed, const uint &damage): object(x, y), playerbullet(0, -speed, damage) {}
     SpellCard *SpellCard::fromReimu(const Reimu *const reimu) {
@@ -63,7 +94,6 @@ namespace ObjectCore {
     //-RoundBullet
     RoundBullet::RoundBullet(const REAL &x, const REAL &y, const REAL &dx, const REAL &dy): object(x, y), enemybullet(dx, dy, 1){};
     RoundBullet *RoundBullet::fromEnemyE(const EnemyE *const enemye, const Reimu *const reimu) {
-        static REAL dx, dy, dis;
         dx  = reimu->_x - enemye->_x;
         dy  = reimu->_y - enemye->_y;
         dis = std::sqrt(dx * dx + dy * dy);

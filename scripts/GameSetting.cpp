@@ -25,5 +25,5 @@ namespace ObjectInterface {
     setBox(RoundBullet, 16, 16)
 
     setshotCD(Reimu, 5);
-    setshotCD(EnemyE, 60);
+    setshotCD(EnemyE, 120);
 } // namespace ObjectInterface

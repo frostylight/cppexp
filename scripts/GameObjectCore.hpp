@@ -18,6 +18,25 @@ namespace ObjectCore {
         void update() override;
     };
 
+    //普通敌人
+    class EnemyE final: public ObjectBase::enemy,
+                        public ObjectInterface::IBox<EnemyE>,
+                        public ObjectInterface::IImg<EnemyE>,
+                        public ObjectInterface::Ishot<EnemyE> {
+        friend class RoundBullet;
+
+        REAL _sx, _sy, _lx, _ly;
+        bool _arr;
+
+      public:
+        EnemyE(const REAL &x, const REAL &y, const REAL &sx, const REAL &sy, const REAL &lx, const REAL &ly, const int &health);
+
+        void update() override;
+
+        bool inMap(const REAL &width, const REAL &height) const override;
+    };
+
+    //灵梦的符纸
     class SpellCard final: public ObjectBase::playerbullet,
                            public ObjectInterface::IBox<SpellCard>,
                            public ObjectInterface::IImg<SpellCard> {
@@ -30,17 +49,7 @@ namespace ObjectCore {
         void draw() override;
     };
 
-    class EnemyE final: public ObjectBase::enemy,
-                        public ObjectInterface::IBox<EnemyE>,
-                        public ObjectInterface::IImg<EnemyE>,
-                        public ObjectInterface::Ishot<EnemyE> {
-        friend class RoundBullet;
-
-        REAL _sx, _sy, _lx, _ly;
-
-      public:
-    };
-
+    //普通圆形弹幕
     class RoundBullet final: public ObjectBase::enemybullet,
                              public ObjectInterface::IBox<RoundBullet>,
                              public ObjectInterface::IImg<RoundBullet> {
