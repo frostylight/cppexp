@@ -4,7 +4,6 @@
 using namespace FROSTYLIB;
 using namespace ObjectInterface;
 using namespace ObjectBase;
-using namespace std;
 using namespace Setting;
 
 template<std::integral T, std::floating_point U>
@@ -70,7 +69,7 @@ namespace ObjectCore {
         static REAL dx, dy, dis;
         dx  = reimu->_x - enemye->_x;
         dy  = reimu->_y - enemye->_y;
-        dis = sqrt(dx * dx + dy * dy);
+        dis = std::sqrt(dx * dx + dy * dy);
         return new RoundBullet(enemye->_x, enemye->_y, RoundSpeed * dx / dis, RoundSpeed * dy / dis);
     }
 
