@@ -14,8 +14,7 @@ namespace ObjectInterface {
     template<typename T>
     class IBox: virtual public ObjectBase::object {
       protected:
-        IBox()
-          : ObjectBase::object(0, 0) {}
+        IBox(): ObjectBase::object(0, 0) {}
         //实际object构造由最后派生类决定,此处占位
 
       public:
@@ -28,25 +27,21 @@ namespace ObjectInterface {
         //碰撞检测
         template<typename U>
         inline bool collide(const IBox<U> *const obj) const {
-            return abs(_x - obj->_x) <= IBox<T>::_halfboxwidth + IBox<U>::_halfboxwidth &&
-                   abs(_y - obj->_y) <= IBox<T>::_halfboxheight + IBox<U>::_halfboxheight;
+            return abs(_x - obj->_x) <= IBox<T>::_halfboxwidth + IBox<U>::_halfboxwidth && abs(_y - obj->_y) <= IBox<T>::_halfboxheight + IBox<U>::_halfboxheight;
         }
         inline bool collide(const IBox<T> *const obj) const {
-            return abs(_x - obj->_x) <= IBox<T>::_boxwidth &&
-                   abs(_y - obj->_y) <= IBox<T>::_boxheight;
+            return abs(_x - obj->_x) <= IBox<T>::_boxwidth && abs(_y - obj->_y) <= IBox<T>::_boxheight;
         }
 
         bool inMap(const REAL &width, const REAL &height) const override {
-            return _halfboxwidth <= _x && _x + _halfboxwidth <= width &&
-                   _halfboxheight <= _y && _y + _halfboxheight <= height;
+            return _halfboxwidth <= _x && _x + _halfboxwidth <= width && _halfboxheight <= _y && _y + _halfboxheight <= height;
         }
     };
 
     template<typename T>
     class Ishot: virtual public ObjectBase::object {
       protected:
-        Ishot()
-          : ObjectBase::object(0, 0), _shotcount(0) {}
+        Ishot(): ObjectBase::object(0, 0), _shotcount(0) {}
         // 实际object构造由最后派生类决定,此处占位
         uint _shotcount;
 
@@ -72,8 +67,7 @@ namespace ObjectInterface {
         static FROSTYLIB::Img *_img;
         //此类静态成员应在GameResource.cpp中赋值
 
-        IImg()
-          : ObjectBase::object(0, 0) {}
+        IImg(): ObjectBase::object(0, 0) {}
         //实际object构造由最后派生类决定,此处占位
 
       public:
@@ -85,9 +79,7 @@ namespace ObjectInterface {
     template<typename T>
     FROSTYLIB::Img *IImg<T>::_img(nullptr);
 
-    enum { IDLE  = 0b00,
-           LEFT  = 0b10,
-           RIGHT = 0b01 };
+    enum { IDLE = 0b00, LEFT = 0b10, RIGHT = 0b01 };
     //动画接口
     template<typename T>
     class IAnima: virtual public ObjectBase::object {
@@ -108,8 +100,7 @@ namespace ObjectInterface {
         //当前状态
         byte _state, _last;
 
-        IAnima()
-          : ObjectBase::object(0, 0), _count(0), _time(0), _state(0), _last(0) {}
+        IAnima(): ObjectBase::object(0, 0), _count(0), _time(0), _state(0), _last(0) {}
         //实际object构造由最后派生类决定,此处占位
 
       public:

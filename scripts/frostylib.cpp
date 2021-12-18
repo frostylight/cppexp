@@ -35,11 +35,7 @@ REAL g_fontsize                = 15;
 Gdiplus::FontStyle g_fontstyle = Gdiplus::FontStyleRegular;
 
 Gdiplus::ColorMatrix _halfAlphaMatrix{
-  {{1, 0, 0, 0, 0},
-   {0, 1, 0, 0, 0},
-   {0, 0, 1, 0, 0},
-   {0, 0, 0, 0.5, 0},
-   {0, 0, 0, 0, 1}}
+  {{1, 0, 0, 0, 0}, {0, 1, 0, 0, 0}, {0, 0, 1, 0, 0}, {0, 0, 0, 0.5, 0}, {0, 0, 0, 0, 1}}
 };
 Gdiplus::ImageAttributes *_halfAlpha;
 
@@ -166,12 +162,7 @@ namespace FROSTYLIB {
         if(x == DEFAULT || y == DEFAULT)
             x = y = CW_USEDEFAULT;
 
-        g_hWnd = CreateWindowA(
-          g_wndClsName, wndName,
-          WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX,
-          x, y,
-          width, height,
-          NULL, NULL, 0, NULL);
+        g_hWnd = CreateWindowA(g_wndClsName, wndName, WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX, x, y, width, height, NULL, NULL, 0, NULL);
 
         ASSERT(g_hWnd, L"创建窗口失败");
 
@@ -316,8 +307,7 @@ namespace FROSTYLIB {
 
     Gdiplus::PointF points[3];
     unique_ptr<Gdiplus::TextureBrush> texbrush;
-    Img::Img(wstring filename)
-      : Gdiplus::Image(filename) {
+    Img::Img(wstring filename): Gdiplus::Image(filename) {
         if(this->GetLastStatus() != Gdiplus::Ok)
             throw ImageLoadException();
         _pw = GetWidth();

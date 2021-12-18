@@ -65,7 +65,7 @@ BreakBeforeBraces: Custom
 # TBD
 BreakBeforeConceptDeclarations: true
 # TBD
-BreakBeforeTernaryOperators: true
+BreakBeforeTernaryOperators: false
 # not found in doc
 BreakBeforeInheritanceComma: false
 # TBD
@@ -78,7 +78,7 @@ BreakInheritanceList: AfterComma
 BreakStringLiterals: true
 
 # TBD
-ColumnLimit:     0
+ColumnLimit:     200
 # TBD
 CommentPragmas:  '^ Mark :'
 CompactNamespaces: false

@@ -25,9 +25,9 @@ namespace ObjectCore {
         SpellCard(const REAL &x, const REAL &y, const REAL &speed, const uint &damage);
 
       public:
-        void draw() override;
-
         [[nodiscard]] static SpellCard *fromReimu(const Reimu *const reimu);
+
+        void draw() override;
     };
 
     class EnemyE final: public ObjectBase::enemy,
@@ -35,7 +35,8 @@ namespace ObjectCore {
                         public ObjectInterface::IImg<EnemyE>,
                         public ObjectInterface::Ishot<EnemyE> {
         friend class RoundBullet;
-        REAL _sx, _sy;
+
+        REAL _sx, _sy, _lx, _ly;
 
       public:
     };

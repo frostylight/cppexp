@@ -25,8 +25,7 @@ inline U min(const U &x, const T &y) {
 
 namespace ObjectCore {
     //-Reimu
-    Reimu::Reimu(const int &health)
-      : object(SpwanX, SpwanY), player(health, ReimuSpeed) {}
+    Reimu::Reimu(const int &health): object(SpwanX, SpwanY), player(health, ReimuSpeed) {}
     void Reimu::update() {
         _last  = _state;
         _state = IDLE;
@@ -53,18 +52,16 @@ namespace ObjectCore {
     }
 
     //-SpellCard
-    SpellCard::SpellCard(const REAL &x, const REAL &y, const REAL &speed, const uint &damage)
-      : object(x, y), playerbullet(0, -speed, damage) {}
-    void SpellCard::draw() {
-        IImg<SpellCard>::_img->drawC(_x, _y + SpellCardFix);
-    }
+    SpellCard::SpellCard(const REAL &x, const REAL &y, const REAL &speed, const uint &damage): object(x, y), playerbullet(0, -speed, damage) {}
     SpellCard *SpellCard::fromReimu(const Reimu *const reimu) {
         return new SpellCard(reimu->_x, reimu->_y, SpellCardSpeed, 1);
     }
+    void SpellCard::draw() {
+        IImg<SpellCard>::_img->drawC(_x, _y + SpellCardFix);
+    }
 
     //-RoundBullet
-    RoundBullet::RoundBullet(const REAL &x, const REAL &y, const REAL &dx, const REAL &dy)
-      : object(x, y), enemybullet(dx, dy, 1){};
+    RoundBullet::RoundBullet(const REAL &x, const REAL &y, const REAL &dx, const REAL &dy): object(x, y), enemybullet(dx, dy, 1){};
     RoundBullet *RoundBullet::fromEnemyE(const EnemyE *const enemye, const Reimu *const reimu) {
         static REAL dx, dy, dis;
         dx  = reimu->_x - enemye->_x;
