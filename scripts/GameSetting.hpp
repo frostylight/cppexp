@@ -16,14 +16,22 @@ namespace Setting {
     constexpr uint SpwanX = halfMapWidth,
                    SpwanY = MapHeight * 0.75;
 
-    constexpr REAL MapSpeed = 0.3;
+    constexpr REAL MapSpeed       = 0.3;
+    constexpr REAL ReimuSpeed     = 4.5;
+    constexpr REAL SpellCardSpeed = 15;
+    constexpr REAL RoundSpeed     = 1;
 
-    constexpr REAL ReimuSpeed = 4.5;
+    namespace Key {
+        constexpr byte AttackKey = 'Z';
+
+    } // namespace Key
 
     namespace UI {
         constexpr uint SymbolX = halfWinWidth + halfMapWidth,
                        SymbolY = 340;
 
     } // namespace UI
+
+    constexpr uint SpellCardFix = 7;
 
 } // namespace Setting

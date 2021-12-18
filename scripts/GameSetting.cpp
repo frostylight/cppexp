@@ -3,7 +3,7 @@
 using namespace FROSTYLIB;
 using namespace ObjectCore;
 
-#define definebox(classname, width, height)                     \
+#define setBox(classname, width, height)                        \
     template<>                                                  \
     constexpr uint IBox<classname>::_boxwidth = width;          \
     template<>                                                  \
@@ -13,10 +13,17 @@ using namespace ObjectCore;
     template<>                                                  \
     constexpr uint IBox<classname>::_halfboxheight = height >> 1;
 
+#define setshotCD(classname, CD) \
+    template<>                   \
+    constexpr uint Ishot<classname>::_shotCD = CD;
+
 
 namespace ObjectInterface {
-    definebox(Reimu, 24, 40)
-    definebox(SpellCard, 12, 14)
-    definebox(EnemyE, 20, 22)
-    definebox(RoundBullet, 16, 16)
+    setBox(Reimu, 24, 40)
+    setBox(SpellCard, 12, 14)
+    setBox(EnemyE, 20, 22)
+    setBox(RoundBullet, 16, 16)
+
+    setshotCD(Reimu, 5);
+    setshotCD(EnemyE, 60);
 } // namespace ObjectInterface

@@ -11,12 +11,15 @@ namespace ObjectBase {
         REAL _x, _y;
 
         object(const REAL &x, const REAL &y);
+        virtual ~object();
 
       public:
         //数据更新
         virtual void update() = 0;
         //绘图
         virtual void draw() = 0;
+
+        virtual bool inMap(const REAL &width, const REAL &height) const;
     };
 
     //人物

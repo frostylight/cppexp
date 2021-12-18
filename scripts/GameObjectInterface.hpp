@@ -35,6 +35,33 @@ namespace ObjectInterface {
             return abs(_x - obj->_x) <= IBox<T>::_boxwidth &&
                    abs(_y - obj->_y) <= IBox<T>::_boxheight;
         }
+
+        bool inMap(const REAL &width, const REAL &height) const override {
+            return _halfboxwidth <= _x && _x + _halfboxwidth <= width &&
+                   _halfboxheight <= _y && _y + _halfboxheight <= height;
+        }
+    };
+
+    template<typename T>
+    class Ishot: virtual public ObjectBase::object {
+      protected:
+        Ishot()
+          : ObjectBase::object(0, 0), _shotcount(0) {}
+        // 实际object构造由最后派生类决定,此处占位
+        uint _shotcount;
+
+      public:
+        static const uint _shotCD;
+        //此类静态成员应在GameSetting.cpp中定义并赋值
+
+        virtual void update() override {
+            if(++_shotcount == Ishot<T>::_shotCD)
+                _shotcount = 0;
+        }
+
+        virtual bool ready() const {
+            return !_shotcount;
+        }
     };
 
     //静态图片接口

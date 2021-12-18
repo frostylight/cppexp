@@ -176,7 +176,7 @@ SpacesInSquareBrackets: false
 
 Standard:        Latest
 StatementAttributeLikeMacros: []
-StatementMacros: [definebox]
+StatementMacros: [setBox,setShotCD]
 TabWidth:        4
 UseCRLF:         false
 UseTab:          Never

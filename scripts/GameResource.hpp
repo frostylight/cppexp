@@ -7,8 +7,9 @@ enum class BGM {
 };
 enum class SE {
     PLAYERSHOT,
-    ENEMYDEAD,
-    PLAYERDEAD
+    PLAYERDEAD,
+    ENEMYSHOT,
+    ENEMYDEAD
 };
 
 //加载图片相关资源

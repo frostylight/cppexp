@@ -22,7 +22,6 @@ class ImgResManager: IImg<T> {
 
     ImgResManager()                         = delete;
     ImgResManager(const ImgResManager &irm) = delete;
-    ~ImgResManager()                        = delete;
     ImgResManager &operator=(const ImgResManager &irm) = delete;
 };
 
@@ -33,7 +32,6 @@ class AnimaResManager: IAnima<T> {
 
     AnimaResManager()                           = delete;
     AnimaResManager(const AnimaResManager &irm) = delete;
-    ~AnimaResManager()                          = delete;
     AnimaResManager &operator=(const AnimaResManager &irm) = delete;
 };
 
@@ -81,8 +79,9 @@ void loadResource() {
     loadSound((uint)BGM::THEME, L"res/audio/bgm/theme.wav");
     loadSound((uint)BGM::STG1, L"res/audio/bgm/stg1.wav");
     loadSound((uint)BGM::EMPTY + (uint)SE::PLAYERSHOT, L"res/audio/se/playershot.wav");
-    loadSound((uint)BGM::EMPTY + (uint)SE::ENEMYDEAD, L"res/audio/se/enemydead.wav");
     loadSound((uint)BGM::EMPTY + (uint)SE::PLAYERDEAD, L"res/audio/se/playerdead.wav");
+    loadSound((uint)BGM::EMPTY + (uint)SE::ENEMYSHOT, L"res/audio/se/enemyshot.wav");
+    loadSound((uint)BGM::EMPTY + (uint)SE::ENEMYDEAD, L"res/audio/se/enemydead.wav");
 }
 
 REAL BGshift = 0;
@@ -112,6 +111,7 @@ namespace Game {
 
     void playSE(const SE &se) {
         playSound((uint)se + (uint)BGM::EMPTY);
+        setVolume((uint)se + (uint)BGM::EMPTY, 30);
     }
 
 } // namespace Game
