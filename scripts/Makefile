@@ -3,7 +3,7 @@ Dep = $(Scripts:.o=.d)
 
 
 all : $(Scripts:%=$(CacheDir)/%)
-	@echo= finish compile
+	@echo=finish compile
 
 $(CacheDir)/%.o : %.cpp
 	$(Compiler) $(CompileParam) -c $< -o $@
@@ -11,5 +11,7 @@ $(CacheDir)/%.o : %.cpp
 $(CacheDir)/%.d : %.cpp
 	@echo updating dependences of $<
 	@$(Compiler) $< -MM > $@
+#	python dep.py $@.t
+#	del $@.t
 
-include $(Dep:%=$(CacheDir)/%)
+#include $(Dep:%=$(CacheDir)/%)

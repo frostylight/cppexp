@@ -27,7 +27,7 @@ namespace ObjectInterface {
         //碰撞检测
         template<typename U>
         inline bool collide(const IBox<U> *const obj) const {
-            return abs(_x - obj->_x) <= IBox<T>::_halfboxwidth + IBox<U>::_halfboxwidth && abs(_y - obj->_y) <= IBox<T>::_halfboxheight + IBox<U>::_halfboxheight;
+            return abs(_x - obj->getx()) <= IBox<T>::_halfboxwidth + IBox<U>::_halfboxwidth && abs(_y - obj->gety()) <= IBox<T>::_halfboxheight + IBox<U>::_halfboxheight;
         }
         inline bool collide(const IBox<T> *const obj) const {
             return abs(_x - obj->_x) <= IBox<T>::_boxwidth && abs(_y - obj->_y) <= IBox<T>::_boxheight;

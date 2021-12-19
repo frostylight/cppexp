@@ -9,8 +9,9 @@ using namespace FROSTYLIB;
 using namespace Setting;
 
 
-wchar *_resload;
-wchar *_FormatW(const wchar *const format, const uint &index) {
+wchar _resload[1000];
+template<typename T>
+wchar *_FormatW(const wchar *const format, const T &index) {
     swprintf(_resload, format, index);
     return _resload;
 }
@@ -65,13 +66,14 @@ Img *Mapmist = nullptr;
 Img *Tabbg   = nullptr;
 Img *Tabsyb  = nullptr;
 
+Gdiplus::SolidBrush *AquaBrush;
+Gdiplus::Font *FpsFont;
+
 void loadResource() {
-    _resload = new wchar[10000];
     AnimaResManager<Reimu>::load();
     ImgResManager<SpellCard>::load();
     ImgResManager<EnemyE>::load();
     ImgResManager<RoundBullet>::load();
-    delete[] _resload;
 
     Mapbg   = Img::FromFile(L"res/img/UI/Map/Background.png");
     Mapmist = Img::FromFile(L"res/img/UI/Map/mist.png");
@@ -84,6 +86,9 @@ void loadResource() {
     loadSound((uint)BGM::EMPTY + (uint)SE::PLAYERDEAD, L"res/audio/se/playerdead.wav");
     loadSound((uint)BGM::EMPTY + (uint)SE::ENEMYSHOT, L"res/audio/se/enemyshot.wav");
     loadSound((uint)BGM::EMPTY + (uint)SE::ENEMYDEAD, L"res/audio/se/enemydead.wav");
+
+    AquaBrush = new Gdiplus::SolidBrush(COLOR::Aqua);
+    FpsFont   = getFont(15);
 }
 
 REAL BGshift = 0;
@@ -98,6 +103,9 @@ namespace Game {
         Mapmist->draw(0, 0);
         Tabbg->FillRect(MapWidth + 1, 0, WinWidth - MapWidth, WinHeight);
         Tabsyb->drawC(UI::SymbolX, UI::SymbolY);
+        paintText(_FormatW(L"FPS:%.2f", _fps), WinWidth - 50, WinHeight - 20, FpsFont, AquaBrush);
+        paintText(_FormatW(L"Health:%d", _health), halfMapWidth + halfWinWidth, 75);
+        paintText(_FormatW(L"Score:%10d", _score), halfWinWidth + halfMapWidth, 95);
     }
 
     BGM bgmnow(BGM::EMPTY);

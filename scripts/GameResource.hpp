@@ -1,22 +1,17 @@
 #pragma once
 
-enum class BGM {
-    THEME,
-    STG1,
-    EMPTY
-};
-enum class SE {
-    PLAYERSHOT,
-    PLAYERDEAD,
-    ENEMYSHOT,
-    ENEMYDEAD
-};
+enum class BGM { THEME, STG1, EMPTY };
+enum class SE { PLAYERSHOT, PLAYERDEAD, ENEMYSHOT, ENEMYDEAD };
 
 //加载图片相关资源
 void loadResource();
 
 
 namespace Game {
+    inline REAL _fps    = 0;
+    inline uint _score  = 0;
+    inline uint _health = 3;
+
     //更新背景
     void BGupdate();
     //绘制背景

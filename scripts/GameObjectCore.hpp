@@ -29,7 +29,7 @@ namespace ObjectCore {
         bool _arr;
 
       public:
-        EnemyE(const REAL &x, const REAL &y, const REAL &sx, const REAL &sy, const REAL &lx, const REAL &ly, const int &health);
+        EnemyE(const REAL &x, const REAL &y, const REAL &sx, const REAL &sy, const REAL &lx, const REAL &ly);
 
         void update() override;
 

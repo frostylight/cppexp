@@ -19,7 +19,7 @@ using namespace ObjectCore;
 
 
 namespace ObjectInterface {
-    setBox(Reimu, 24, 40)
+    setBox(Reimu, 14, 30)
     setBox(SpellCard, 12, 14)
     setBox(EnemyE, 20, 22)
     setBox(RoundBullet, 16, 16)

@@ -12,7 +12,8 @@ using namespace ObjectCore;
 using namespace Setting;
 
 uint framecount = 0;
-bool onrun      = 0;
+bool onpaint    = 0;
+StopWatch sw;
 
 Reimu reimu(3);
 std::list<SpellCard *> spellcard;
@@ -50,18 +51,22 @@ void stgenemy() {
         return;
     switch(framecount % 300) {
         case 0:;
-        case 10:;
-        case 15:;
-            enemye.push_back(new EnemyE((halfMapWidth >> 1) + randft(-40, 0), 0, halfMapWidth + randft(-40, 0), halfMapHeight + randft(-20, 20), -1, (halfMapHeight >> 1) + randft(-20, 20), 1));
+        case 20:;
+        case 40:;
+        case 60:;
+        case 80:;
+        case 150:;
+        case 170:;
+        case 190:;
+        case 210:;
+        case 230:;
+            enemye.push_back(new EnemyE((halfMapWidth >> 1) + randft(-40, 0), 0, halfMapWidth + randft(-80, 0), halfMapHeight + randft(-20, 20), -1, (halfMapHeight >> 1) + randft(-20, 20)));
+            enemye.push_back(new EnemyE(MapWidth * 0.75 + randft(0, 40), 0, halfMapWidth + randft(0, 80), halfMapHeight + randft(-20, 20), MapWidth + 1, (halfMapHeight >> 1) + randft(-20, 20)));
             break;
     }
 }
 
 TIMER(GameRun) {
-    if(onrun)
-        return;
-    onrun = true;
-
     ++framecount;
 
     //-数据更新
@@ -82,9 +87,49 @@ TIMER(GameRun) {
     }
     listupdate(roundbullet);
 
-    // todo 碰撞检测
+    //-碰撞检测
+    for(auto eit = enemye.begin(); eit != enemye.end();) {
+        bool dead = false;
+        for(auto sit = spellcard.begin(); sit != spellcard.end();) {
+            if((*eit)->collide(*sit)) {
+                (*eit)->hurt(*sit);
+                spellcard.erase(sit++);
+                if(!(*eit)->alive()) {
+                    Game::playSE(SE::ENEMYDEAD);
+                    enemye.erase(eit++);
+                    dead = true;
+                    Game::_score += 50;
+                    break;
+                }
+            }
+            else {
+                ++sit;
+            }
+        }
+        if(!dead)
+            ++eit;
+    }
+    for(auto rbit = roundbullet.begin(); rbit != roundbullet.end(); ++rbit) {
+        if((*rbit)->collide(&reimu)) {
+            reimu.hurt(*rbit);
+            --Game::_health;
+            Game::_score -= 1000;
+            Game::playSE(SE::PLAYERDEAD);
+            if(!reimu.alive()) {
+                cancelTimer(0);
+                ERROR_MSG(L"You Lose");
+            }
+            roundbullet.clear();
+            enemye.clear();
+            break;
+        }
+    }
 
     //-图像绘制
+    if(onpaint)
+        return;
+    onpaint = true;
+
     beginPaint();
     Game::BGdraw();
     reimu.draw();
@@ -93,7 +138,14 @@ TIMER(GameRun) {
     listdraw(roundbullet);
     endPaint();
 
-    onrun = false;
+    onpaint = false;
+}
+TIMER(fpscounter) {
+    static uint last = framecount;
+    sw.stop();
+    Game::_fps = (framecount - last) / sw.getsecond();
+    last       = framecount;
+    sw.restart();
 }
 
 void Setup() {
@@ -103,5 +155,7 @@ void Setup() {
     loadResource();
     setBrushColor(COLOR::White);
     Game::playBGM(BGM::STG1);
+    sw.start();
     startTimer(0, 15, GameRun);
+    startTimer(1, 1000, fpscounter);
 }

@@ -57,8 +57,7 @@ namespace ObjectCore {
     }
 
     //-EnemyE
-    EnemyE::EnemyE(const REAL &x, const REAL &y, const REAL &sx, const REAL &sy, const REAL &lx, const REAL &ly, const int &health)
-      : object(x, y), enemy(health), _sx(sx), _sy(sy), _lx(lx), _ly(ly), _arr(false) {}
+    EnemyE::EnemyE(const REAL &x, const REAL &y, const REAL &sx, const REAL &sy, const REAL &lx, const REAL &ly): object(x, y), enemy(1), _sx(sx), _sy(sy), _lx(lx), _ly(ly), _arr(false) {}
     void EnemyE::update() {
         if(!_arr) {
             dx  = _sx - _x;

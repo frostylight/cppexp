@@ -4,6 +4,12 @@
 namespace ObjectBase {
     object::object(const REAL &x, const REAL &y): _x(x), _y(y) {}
     object::~object() {}
+    REAL object::getx() const {
+        return _x;
+    }
+    REAL object::gety() const {
+        return _y;
+    }
 
     bool object::inMap(const REAL &width, const REAL &height) const {
         return _x >= 0 && _x <= width && _y >= 0 && _y <= height;
@@ -21,6 +27,12 @@ namespace ObjectBase {
 
     chara::chara(const int &health): object(0, 0), _health(health) {}
     //实际object构造由最后派生类决定,此处占位
+    void chara::hurt(const bullet *const bt) {
+        _health -= bt->_damage;
+    }
+    bool chara::alive() const {
+        return _health > 0;
+    }
 
     player::player(const int &health, const REAL &speed): chara(health), _speed(speed) {}
 

@@ -20,29 +20,9 @@ namespace ObjectBase {
         virtual void draw() = 0;
 
         virtual bool inMap(const REAL &width, const REAL &height) const;
-    };
 
-    //人物
-    class chara: virtual public object {
-      protected:
-        //生命值
-        int _health;
-
-        chara(const int &health);
-    };
-
-    //玩家
-    class player: public chara {
-      protected:
-        REAL _speed;
-
-        player(const int &health, const REAL &speed);
-    };
-
-    //敌人
-    class enemy: public chara {
-      protected:
-        using chara::chara;
+        REAL getx() const;
+        REAL gety() const;
     };
 
     //物体
@@ -59,6 +39,8 @@ namespace ObjectBase {
 
     //子弹
     class bullet: public item {
+        friend class chara;
+
       protected:
         //命中伤害
         uint _damage;
@@ -76,6 +58,33 @@ namespace ObjectBase {
     class enemybullet: public bullet {
       protected:
         using bullet::bullet;
+    };
+
+    //人物
+    class chara: virtual public object {
+      protected:
+        //生命值
+        int _health;
+
+        chara(const int &health);
+
+      public:
+        void hurt(const bullet *const bt);
+        bool alive() const;
+    };
+
+    //玩家
+    class player: public chara {
+      protected:
+        REAL _speed;
+
+        player(const int &health, const REAL &speed);
+    };
+
+    //敌人
+    class enemy: public chara {
+      protected:
+        using chara::chara;
     };
 
 } // namespace ObjectBase

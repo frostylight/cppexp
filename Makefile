@@ -12,7 +12,7 @@ export CacheDir Compiler CompileParam
 all : checkcache core.exe
 
 checkcache :
-	@if not exist $(CacheDir) mkdir $(CacheDir)
+	@if not exist "$(CacheDir)" mkdir "$(CacheDir)"
 
 compile:
 	@mingw32-make --no-print-directory -C scripts

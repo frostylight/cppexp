@@ -103,7 +103,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
             Gdiplus::GdiplusStartup(&m_pGdiToken, &m_gdiplusStartupInput, nullptr);
             g_pen          = new Gdiplus::Pen(COLOR::Aqua);
             g_brush        = new Gdiplus::SolidBrush(COLOR::Aqua);
-            g_textbrush    = new Gdiplus::SolidBrush(COLOR::Black);
+            g_textbrush    = new Gdiplus::SolidBrush(COLOR::White);
             g_fontfamily   = make_unique<Gdiplus::FontFamily>(L"Consolas");
             g_font         = make_unique<Gdiplus::Font>(g_fontfamily.get(), g_fontsize, g_fontstyle, Gdiplus::UnitPixel);
             g_stringformat = new Gdiplus::StringFormat(Gdiplus::StringFormat::GenericDefault());
