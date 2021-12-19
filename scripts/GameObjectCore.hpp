@@ -16,6 +16,8 @@ namespace ObjectCore {
         Reimu(const int &health);
 
         void update() override;
+
+        void respwan() override;
     };
 
     //普通敌人

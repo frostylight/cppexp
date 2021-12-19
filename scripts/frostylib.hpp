@@ -52,6 +52,7 @@ namespace FROSTYLIB {
     bool ishold(const byte &key);
 
     void loadSound(const uint &index, wstring sound);
+    void loadSound(const uint &index, wstring sound, const uint &volume);
     void playSound(const uint &index, const bool &repeat = false);
     void stopSound(const uint &index);
     void setVolume(const uint &index, const uint &volume);

@@ -55,6 +55,10 @@ namespace ObjectCore {
             Ishot<Reimu>::update();
         IAnima<Reimu>::update();
     }
+    void Reimu::respwan() {
+        _x = SpwanX;
+        _y = SpwanY;
+    }
 
     //-EnemyE
     EnemyE::EnemyE(const REAL &x, const REAL &y, const REAL &sx, const REAL &sy, const REAL &lx, const REAL &ly): object(x, y), enemy(1), _sx(sx), _sy(sy), _lx(lx), _ly(ly), _arr(false) {}

@@ -80,12 +80,12 @@ void loadResource() {
     Tabbg   = Img::FromFile(L"res/img/UI/TabBar/Background.png");
     Tabsyb  = Img::FromFile(L"res/img/UI/TabBar/Symbol.png");
 
-    loadSound((uint)BGM::THEME, L"res/audio/bgm/theme.wav");
-    loadSound((uint)BGM::STG1, L"res/audio/bgm/stg1.wav");
-    loadSound((uint)BGM::EMPTY + (uint)SE::PLAYERSHOT, L"res/audio/se/playershot.wav");
-    loadSound((uint)BGM::EMPTY + (uint)SE::PLAYERDEAD, L"res/audio/se/playerdead.wav");
-    loadSound((uint)BGM::EMPTY + (uint)SE::ENEMYSHOT, L"res/audio/se/enemyshot.wav");
-    loadSound((uint)BGM::EMPTY + (uint)SE::ENEMYDEAD, L"res/audio/se/enemydead.wav");
+    loadSound((uint)BGM::THEME, L"res/audio/bgm/theme.wav", 150);
+    loadSound((uint)BGM::STG1, L"res/audio/bgm/stg1.wav", 150);
+    loadSound((uint)BGM::EMPTY + (uint)SE::PLAYERSHOT, L"res/audio/se/playershot.wav", 40);
+    loadSound((uint)BGM::EMPTY + (uint)SE::PLAYERDEAD, L"res/audio/se/playerdead.wav", 30);
+    loadSound((uint)BGM::EMPTY + (uint)SE::ENEMYSHOT, L"res/audio/se/enemyshot.wav", 25);
+    loadSound((uint)BGM::EMPTY + (uint)SE::ENEMYDEAD, L"res/audio/se/enemydead.wav", 35);
 
     AquaBrush = new Gdiplus::SolidBrush(COLOR::Aqua);
     FpsFont   = getFont(15);
@@ -116,12 +116,10 @@ namespace Game {
         if(bgm == BGM::EMPTY)
             return;
         playSound((uint)bgm, repeat);
-        setVolume((uint)bgm, 150);
     }
 
     void playSE(const SE &se) {
         playSound((uint)se + (uint)BGM::EMPTY);
-        setVolume((uint)se + (uint)BGM::EMPTY, 30);
     }
 
 } // namespace Game

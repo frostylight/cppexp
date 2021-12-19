@@ -119,6 +119,7 @@ TIMER(GameRun) {
                 cancelTimer(0);
                 ERROR_MSG(L"You Lose");
             }
+            reimu.respwan();
             roundbullet.clear();
             enemye.clear();
             break;

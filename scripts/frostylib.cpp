@@ -206,6 +206,10 @@ namespace FROSTYLIB {
             WARNING_MSG(_mcistr);
         }
     }
+    void loadSound(const uint &index, wstring sound, const uint &volume) {
+        loadSound(index, sound);
+        setVolume(index, volume);
+    }
     void playSound(const uint &index, const bool &repeat) {
         swprintf(_mcistr, L"play S%d from 0%ls", index, repeat ? L" repeat" : L"");
         if(mciSendStringW(_mcistr, NULL, 0, NULL)) {

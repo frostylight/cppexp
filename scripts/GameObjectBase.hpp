@@ -79,6 +79,9 @@ namespace ObjectBase {
         REAL _speed;
 
         player(const int &health, const REAL &speed);
+
+      public:
+        virtual void respwan() = 0;
     };
 
     //敌人
