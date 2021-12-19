@@ -18,14 +18,15 @@ namespace ObjectBase {
         virtual void update() = 0;
         //绘图
         virtual void draw() = 0;
-
+        //是否在地图内
         virtual bool inMap(const REAL &width, const REAL &height) const;
 
         REAL getx() const;
         REAL gety() const;
     };
 
-    //物体
+    //除角色以外的物体
+    //虚继承以与其他类共享基类变量
     class item: virtual public object {
       protected:
         //每帧位移
@@ -69,18 +70,22 @@ namespace ObjectBase {
         chara(const int &health);
 
       public:
+        //被子弹命中
         void hurt(const bullet *const bt);
+        //是否存活
         bool alive() const;
     };
 
     //玩家
     class player: public chara {
       protected:
+        //移动速度
         REAL _speed;
 
         player(const int &health, const REAL &speed);
 
       public:
+        //复活重生
         virtual void respwan() = 0;
     };
 

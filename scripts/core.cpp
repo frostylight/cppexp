@@ -154,7 +154,6 @@ void Setup() {
     initConsole();
     srand(time(nullptr));
     loadResource();
-    setBrushColor(COLOR::White);
     Game::playBGM(BGM::STG1);
     sw.start();
     startTimer(0, 15, GameRun);
