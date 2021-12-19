@@ -16,7 +16,8 @@ core.exe : compile
 	$(Compiler) $(CompileParam) $(Scripts)/*.o $(LIB:%=-l%) -o core.exe
 
 clean:
-	@del $(Scripts)/*.o
-	@del $(Scripts)/*.d 
+	@del $(Scripts)\*.o
+	@del $(Scripts)\*.d
+	@del core.exe
 
 
