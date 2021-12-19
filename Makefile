@@ -1,5 +1,5 @@
 Compiler = g++
-CompileParam = -std=c++20 -Wall
+CompileParam = -std=c++20 -static -O3
 LIB = gdi32 gdiplus winmm
 
 Scripts = scripts
@@ -15,9 +15,11 @@ compile:
 core.exe : compile
 	$(Compiler) $(CompileParam) $(Scripts)/*.o $(LIB:%=-l%) -o core.exe
 
-clean:
+cleancache:
 	@del $(Scripts)\*.o
 	@del $(Scripts)\*.d
+
+clean : cleancache
 	@del core.exe
 
 
