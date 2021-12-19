@@ -2,16 +2,14 @@ Scripts = $(subst .cpp,.o,$(wildcard *.cpp))
 Dep = $(Scripts:.o=.d)
 
 
-all : $(Scripts:%=$(CacheDir)/%)
-	@echo=finish compile
+all : $(Scripts)
+	@echo= 
 
-$(CacheDir)/%.o : %.cpp
+%.o : %.cpp
 	$(Compiler) $(CompileParam) -c $< -o $@
 
-$(CacheDir)/%.d : %.cpp
+%.d : %.cpp
 	@echo updating dependences of $<
 	@$(Compiler) $< -MM > $@
-#	python dep.py $@.t
-#	del $@.t
 
-#include $(Dep:%=$(CacheDir)/%)
+include $(Dep)

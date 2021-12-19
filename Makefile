@@ -2,23 +2,21 @@ Compiler = g++
 CompileParam = -std=c++20 -Wall
 LIB = gdi32 gdiplus winmm
 
-TopDir = $(CURDIR)
-CacheDir = $(TopDir)/cache
 Scripts = scripts
 src=$(subst scripts,$(CacheDir),$(subst .cpp,.o,$(wildcard scripts/*.cpp)))
 
-export CacheDir Compiler CompileParam
+export Compiler CompileParam
 
-all : checkcache core.exe
-
-checkcache :
-	@if not exist "$(CacheDir)" mkdir "$(CacheDir)"
+all : core.exe
 
 compile:
-	@mingw32-make --no-print-directory -C scripts
+	@mingw32-make --no-print-directory -C $(Scripts)
 
 core.exe : compile
-	$(Compiler) $(CompileParam) $(CacheDir)/*.o $(LIB:%=-l%) -o core.exe
+	$(Compiler) $(CompileParam) $(Scripts)/*.o $(LIB:%=-l%) -o core.exe
 
+clean:
+	@del $(Scripts)/*.o
+	@del $(Scripts)/*.d 
 
 
