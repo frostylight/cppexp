@@ -4,7 +4,7 @@
 
 
 namespace ObjectCore {
-    //玩家自机
+    //玩家自机-灵梦
     class Reimu final: public ObjectBase::player,
                        public ObjectInterface::IBox<Reimu>,
                        public ObjectInterface::IAnima<Reimu>,
@@ -27,7 +27,9 @@ namespace ObjectCore {
                         public ObjectInterface::Ishot<EnemyE> {
         friend class RoundBullet;
 
+        //目标点及离开点
         REAL _sx, _sy, _lx, _ly;
+        //是否到达目标点
         bool _arr;
 
       public:
@@ -46,6 +48,7 @@ namespace ObjectCore {
         SpellCard(const REAL &x, const REAL &y, const REAL &speed, const uint &damage);
 
       public:
+        //根据自机位置生成子弹
         [[nodiscard]] static SpellCard *fromReimu(const Reimu *const reimu);
 
         void draw() override;
@@ -59,6 +62,7 @@ namespace ObjectCore {
         RoundBullet(const REAL &x, const REAL &y, const REAL &dx, const REAL &dy);
 
       public:
+        //根据敌机和自机位置生成子弹
         [[nodiscard]] static RoundBullet *fromEnemyE(const EnemyE *const enemye, const Reimu *const reimu);
     };
 

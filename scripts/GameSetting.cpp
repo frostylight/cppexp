@@ -3,6 +3,7 @@
 using namespace FROSTYLIB;
 using namespace ObjectCore;
 
+//设置碰撞箱
 #define setBox(classname, width, height)                        \
     template<>                                                  \
     constexpr uint IBox<classname>::_boxwidth = width;          \
@@ -13,6 +14,7 @@ using namespace ObjectCore;
     template<>                                                  \
     constexpr uint IBox<classname>::_halfboxheight = height >> 1;
 
+//设置发射CD
 #define setshotCD(classname, CD) \
     template<>                   \
     constexpr uint Ishot<classname>::_shotCD = CD;

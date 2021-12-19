@@ -69,10 +69,7 @@ namespace ObjectInterface {
       public:
         //绘图
         virtual void draw() override {
-            if(!_img)
-                ERROR_MSG(L"Img Resource not load!");
-            else
-                _img->drawC(_x, _y);
+            _img->drawC(_x, _y);
         }
     };
     template<typename T>

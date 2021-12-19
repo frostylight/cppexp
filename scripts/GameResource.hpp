@@ -3,9 +3,9 @@
 enum class BGM { THEME, STG1, EMPTY };
 enum class SE { PLAYERSHOT, PLAYERDEAD, ENEMYSHOT, ENEMYDEAD };
 
+
 //加载图片相关资源
 void loadResource();
-
 
 namespace Game {
     inline REAL _fps    = 0;

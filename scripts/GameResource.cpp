@@ -9,23 +9,29 @@ using namespace FROSTYLIB;
 using namespace Setting;
 
 
+// swprintf用wchar数组
 wchar _resload[1000];
+//简单宽字符串格式化函数
 template<typename T>
 wchar *_FormatW(const wchar *const format, const T &index) {
     swprintf(_resload, format, index);
     return _resload;
 }
 
+// IImg类图片资源加载
 template<typename T>
 class ImgResManager: IImg<T> {
   public:
+    //资源加载
     static void load();
 
+    //删除工具类中默认构造、赋值函数以减少源文件大小
     ImgResManager()                         = delete;
     ImgResManager(const ImgResManager &irm) = delete;
     ImgResManager &operator=(const ImgResManager &irm) = delete;
 };
 
+// IAnima类图片资源加载
 template<typename T>
 class AnimaResManager: IAnima<T> {
   public:
@@ -91,26 +97,34 @@ void loadResource() {
     FpsFont   = getFont(15);
 }
 
+//背景偏移量
 REAL BGshift = 0;
 namespace Game {
     void BGupdate() {
-        BGshift += 0.3;
+        BGshift += MapSpeed;
         if(BGshift >= 255)
             BGshift -= 255;
     }
     void BGdraw() {
+        //地图背景
         Mapbg->FillRect(0, 0, MapWidth, MapHeight, 0, BGshift);
+        //背景渐变迷雾
         Mapmist->draw(0, 0);
+        //记分板背景
         Tabbg->FillRect(MapWidth + 1, 0, WinWidth - MapWidth, WinHeight);
+        //记分板标志
         Tabsyb->drawC(UI::SymbolX, UI::SymbolY);
+        //显示FPS/生命/得分
         paintText(_FormatW(L"FPS:%.2f", _fps), WinWidth - 50, WinHeight - 20, FpsFont, AquaBrush);
         paintText(_FormatW(L"Health:%d", _health), halfMapWidth + halfWinWidth, 75);
         paintText(_FormatW(L"Score:%10d", _score), halfWinWidth + halfMapWidth, 95);
     }
 
+    //现在播放BGM
     BGM bgmnow(BGM::EMPTY);
 
     void playBGM(const BGM &bgm, const bool repeat) {
+        //停止上一个BGM
         if(bgmnow != bgm && bgmnow != BGM::EMPTY)
             stopSound((uint)bgmnow);
         if(bgm == BGM::EMPTY)

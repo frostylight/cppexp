@@ -4,6 +4,7 @@
 
 #include "frostylib.hpp"
 
+//-使用智能指针
 using std::make_unique;
 using std::unique_ptr;
 
@@ -33,7 +34,7 @@ unique_ptr<Gdiplus::FontFamily> g_fontfamily;
 unique_ptr<Gdiplus::Font> g_font;
 REAL g_fontsize                = 15;
 Gdiplus::FontStyle g_fontstyle = Gdiplus::FontStyleRegular;
-
+//半透明颜色调整矩阵
 Gdiplus::ColorMatrix _halfAlphaMatrix{
   {{1, 0, 0, 0, 0}, {0, 1, 0, 0, 0}, {0, 0, 1, 0, 0}, {0, 0, 0, 0.5, 0}, {0, 0, 0, 0, 1}}
 };
@@ -100,6 +101,7 @@ int WINAPI WinMain(HINSTANCE hInstance, [[maybe_unused]] HINSTANCE hPrevInstance
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch(message) {
         case WM_CREATE: {
+            //-初始化GDI+及相关变量
             Gdiplus::GdiplusStartup(&m_pGdiToken, &m_gdiplusStartupInput, nullptr);
             g_pen          = new Gdiplus::Pen(COLOR::Aqua);
             g_brush        = new Gdiplus::SolidBrush(COLOR::Aqua);
@@ -108,15 +110,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
             g_font         = make_unique<Gdiplus::Font>(g_fontfamily.get(), g_fontsize, g_fontstyle, Gdiplus::UnitPixel);
             g_stringformat = new Gdiplus::StringFormat(Gdiplus::StringFormat::GenericDefault());
             g_stringformat->SetAlignment(Gdiplus::StringAlignmentCenter);
-
             _halfAlpha = new Gdiplus::ImageAttributes();
             _halfAlpha->SetColorMatrix(&_halfAlphaMatrix);
 
+            //-初始化定时器
             memset(timerid, 0, sizeof timerid);
             break;
         }
 
         case WM_PAINT: {
+            //-GDI+双缓冲实现
             HDC hdc;
             PAINTSTRUCT ps;
             hdc = BeginPaint(hwnd, &ps);
@@ -131,6 +134,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
             break;
         }
 
+            //-记录键盘
         case WM_KEYDOWN: {
             keyhold[(byte)wParam] = true;
             break;
@@ -142,9 +146,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
         }
 
         case WM_DESTROY: {
+            //-关闭未关闭的定时器
             for(int i = 0; i < 0xff; ++i)
                 if(timerid[i])
                     KillTimer(g_hWnd, i);
+            //-关闭GDI+
             Gdiplus::GdiplusShutdown(m_pGdiToken);
             PostQuitMessage(0);
             break;
@@ -157,7 +163,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
 }
 
 namespace FROSTYLIB {
-
+    //-Init
     void initWindow(const char *wndName, int x, int y, int width, int height) {
         if(g_hWnd) {
             WARNING_MSG(L"不要调用两次initWindow()");
@@ -185,6 +191,7 @@ namespace FROSTYLIB {
         freopen("CONOUT$", "w+t", stdout);
     }
 
+    //-Timer
     void startTimer(const byte &timerID, const uint &timeinterval, TIMERFUNC f) {
         SetTimer(g_hWnd, timerID, timeinterval, f);
         timerid[timerID] = true;
@@ -194,10 +201,12 @@ namespace FROSTYLIB {
         timerid[timerID] = false;
     }
 
+    //-Keyboard
     bool ishold(const byte &key) {
         return keyhold[key];
     }
 
+    //-Sound
     wchar _mcistr[300];
     void loadSound(const uint &index, wstring sound) {
         swprintf(_mcistr, L"open mpegvideo!\"%ls\" alias S%d", sound, index);
@@ -234,6 +243,7 @@ namespace FROSTYLIB {
         }
     }
 
+    //-Paint Control
     void beginPaint() {
         ASSERT(g_hWnd, L"你应该先调用initWindow()");
         ASSERT(!g_bitmap, L"不要连续调用两次beginPaint()");
@@ -247,6 +257,7 @@ namespace FROSTYLIB {
         InvalidateRect(g_hWnd, 0, false);
     }
 
+    //-Pen
     void setPenColor(const COLOR &color) {
         g_pen->SetColor(color);
     }
@@ -254,10 +265,12 @@ namespace FROSTYLIB {
         g_pen->SetWidth(w);
     }
 
+    //-Brush
     void setBrushColor(const COLOR &color) {
         g_brush->SetColor(color);
     }
 
+    //-Text Color/Style/FontSize
     void setTextFont(wstring fontname) {
         g_fontfamily.reset(new Gdiplus::FontFamily(fontname));
         g_font.reset(new Gdiplus::Font(g_fontfamily.get(), g_fontsize, g_fontstyle, Gdiplus::UnitPixel));
@@ -287,6 +300,7 @@ namespace FROSTYLIB {
         g_stringformat->SetLineAlignment(align);
     }
 
+    //-Shape
     void line(const REAL &x1, const REAL &y1, const REAL &x2, const REAL &y2, const Gdiplus::Pen *_pen) {
         ASSERT_PAINT;
         g_graphics->DrawLine(_pen ? _pen : g_pen, x1, y1, x2, y2);
@@ -296,6 +310,7 @@ namespace FROSTYLIB {
         g_graphics->FillRectangle(_brush ? _brush : g_brush, x, y, w, h);
     }
 
+    //-paintText
     void paintText(wstring str, const REAL &x, const REAL &y, const Gdiplus::Font *_font, const Gdiplus::StringFormat *_format, const Gdiplus::Brush *_brush) {
         ASSERT_PAINT;
         g_graphics->DrawString(str, -1, _font, {x, y}, _format, _brush);
@@ -313,7 +328,7 @@ namespace FROSTYLIB {
         paintText(str, x, y, g_font.get(), g_stringformat, g_textbrush);
     }
 
-
+    //-Img
     Gdiplus::PointF points[3];
     unique_ptr<Gdiplus::TextureBrush> texbrush;
     Img::Img(wstring filename): Gdiplus::Image(filename) {
@@ -387,7 +402,7 @@ namespace FROSTYLIB {
         FillRect(x - (_pw >> 1), y - (_ph >> 1), w, h, sx, sy);
     }
 
-
+    //-StopWatch
     LARGE_INTEGER StopWatch::Fre;
     StopWatch::StopWatch() {
         if(!Fre.QuadPart)

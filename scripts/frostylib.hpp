@@ -98,6 +98,7 @@ namespace FROSTYLIB {
         Img(wstring filename);
 
       public:
+        //从文件加载图片
         [[nodiscard]] static Img *FromFile(wstring filename);
 
         inline uint getw() const;
